@@ -36,7 +36,7 @@ void muzzleFlash(uint32_t color, uint8_t flashes_count)
   { // Repeat n_flashes times
     flash(color);
     fadeOut();
-    vTaskDelay(1 / portTICK_PERIOD_MS); // Short delay between flashes
+    vTaskDelay(10 / portTICK_PERIOD_MS); // Short delay between flashes
   }
 }
 
@@ -61,7 +61,7 @@ void fadeOut()
       Ring.setPixelColor(i, Ring.Color(r * brightness / 255, g * brightness / 255, b * brightness / 255));
     }
     Ring.show();
-    delayMicroseconds(1); // Adjust this for faster or slower fading
+    vTaskDelay(1 / portTICK_PERIOD_MS); // Adjust this for faster or slower fading
   }
 }
 
