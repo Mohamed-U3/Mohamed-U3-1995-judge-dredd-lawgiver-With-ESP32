@@ -24,6 +24,7 @@ void TaskOfTriggerButton(void * parameter)
   {
     if (digitalRead(TRIGGER_PIN) == LOW)
     {
+      playSelectedTrack(AMMO_MODE_IDX_FIRE);
       muzzleFlash(flashColorGreen, 3);
       //      if (xSemaphoreTake(mutex_Trigger_button, 0) == pdTRUE)
       //      {
@@ -44,6 +45,10 @@ void TaskOfReloadButton(void * parameter)
   {
     if (digitalRead(RELOAD_PIN) == LOW)
     {
+      selectedAmmoMode++;
+      if (selectedAmmoMode == 7) selectedAmmoMode = 0;
+      Serial.print("ammo:");
+      Serial.println(selectedAmmoMode);
       muzzleFlash(flashColorBlue, 2);
       //      if (xSemaphoreTake(mutex_Reload_button, 0) == pdTRUE)
       //      {
@@ -62,8 +67,9 @@ void Task2code(void * parameter)
 {
   for (;;)
   {
-    vTaskDelay(10000 / portTICK_PERIOD_MS);  // Delay to debounce button
+    playSelectedTrack(AMMO_MODE_IDX_FIRE);
     Serial.println("Task2");
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
     //    if (xSemaphoreTake(semaphore_Reload_button, 0) == pdTRUE)
     //    {
     //      muzzleFlash(flashColorBlue, 2);
