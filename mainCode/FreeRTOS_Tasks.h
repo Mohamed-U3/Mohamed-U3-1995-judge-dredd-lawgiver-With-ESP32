@@ -67,7 +67,6 @@ void Task2code(void * parameter)
 {
   for (;;)
   {
-    playSelectedTrack(AMMO_MODE_IDX_FIRE);
     Serial.println("Task2");
     vTaskDelay(2000 / portTICK_PERIOD_MS);
     //    if (xSemaphoreTake(semaphore_Reload_button, 0) == pdTRUE)
