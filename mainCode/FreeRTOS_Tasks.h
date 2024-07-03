@@ -17,26 +17,59 @@ TaskHandle_t Task1;
 TaskHandle_t Task2;
 TaskHandle_t Task3;
 
-// TaskOfTriggerButton: Check button state then do action
+// Constants for detecting button click or hold
+const static uint32_t BUTTON_HOLD_THRESHOLD = 1000; // Time in milliseconds to consider the button as held
+const static uint32_t DEBOUNCE_DELAY = 50;          // Debounce delay in milliseconds
+
 void TaskOfTriggerButton(void * parameter)
 {
+  uint32_t buttonPressStartTime = 0;
+  bool isButtonPressed = false;
+  bool isButtonHeld = false;
+
   for (;;)
   {
     if (digitalRead(TRIGGER_PIN) == LOW)
     {
-      playSelectedTrack(AMMO_MODE_IDX_FIRE);
-      muzzleFlash(flashColorGreen, 3);
-      //      if (xSemaphoreTake(mutex_Trigger_button, 0) == pdTRUE)
-      //      {
-      //        xSemaphoreGive(semaphore_Trigger_button);  // Give the semaphore when button is pressed
-      //      }
+      if (!isButtonPressed)
+      {
+        // Button press detected
+        buttonPressStartTime = xTaskGetTickCount();
+        isButtonPressed = true;
+        isButtonHeld = false;
+      }
+      else
+      {
+        // Check if the button is held
+        if (!isButtonHeld && (xTaskGetTickCount() - buttonPressStartTime) > (BUTTON_HOLD_THRESHOLD / portTICK_PERIOD_MS))
+        {
+          isButtonHeld = true;
+          // Do action for button hold
+          playSelectedTrack(AMMO_MODE_IDX_FIRE);
+          muzzleFlash(flashColorRed, 5);
+        }
+      }
     }
     else
     {
-      vTaskDelay(10 / portTICK_PERIOD_MS);  // Delay to debounce button
+      if (isButtonPressed)
+      {
+        if (!isButtonHeld)
+        {
+          // Do action for button click
+          playSelectedTrack(AMMO_MODE_IDX_FIRE);
+          muzzleFlash(flashColorGreen, 3);
+        }
+        // Reset button state
+        isButtonPressed = false;
+        isButtonHeld = false;
+        vTaskDelay(DEBOUNCE_DELAY / portTICK_PERIOD_MS);  // Delay to debounce button
+      }
     }
+    vTaskDelay(10 / portTICK_PERIOD_MS);  // Delay to avoid busy-waiting
   }
 }
+
 
 // TaskOfReloadButton: Check button state then do action
 void TaskOfReloadButton(void * parameter)
