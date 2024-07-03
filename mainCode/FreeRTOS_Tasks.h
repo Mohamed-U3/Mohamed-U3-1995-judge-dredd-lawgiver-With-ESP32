@@ -29,7 +29,7 @@ void TaskOfTriggerButton(void * parameter)
 
   for (;;)
   {
-    if (digitalRead(TRIGGER_PIN) == LOW)
+    if (digitalRead(TRIGGER_PIN) == HIGH)
     {
       if (!isButtonPressed)
       {
@@ -76,7 +76,7 @@ void TaskOfReloadButton(void * parameter)
 {
   for (;;)
   {
-    if (digitalRead(RELOAD_PIN) == LOW)
+    if (digitalRead(RELOAD_PIN) == HIGH)
     {
       selectedAmmoMode++;
       if (selectedAmmoMode == 7) selectedAmmoMode = 0;
@@ -98,21 +98,15 @@ void TaskOfReloadButton(void * parameter)
 // Task 2:
 void Task2code(void * parameter)
 {
-  for (;;)
+  while(true)
   {
     Serial.println("Task2");
-    vTaskDelay(2000 / portTICK_PERIOD_MS);
-    //    if (xSemaphoreTake(semaphore_Reload_button, 0) == pdTRUE)
-    //    {
-    //      muzzleFlash(flashColorBlue, 2);
-    //      xSemaphoreGive(mutex_Reload_button);
-    //    }
-    //
-    //    if (xSemaphoreTake(semaphore_Trigger_button, 0) == pdTRUE)
-    //    {
-    //      muzzleFlash(flashColorGreen, 3);
-    //      xSemaphoreGive(mutex_Trigger_button);
-    //    }
+    for(signed char i = 20; i>=0 ;i--)
+    {
+      FS_LED_Animation4FMJ(i, flashColorRed);
+      vTaskDelay(1000 / portTICK_PERIOD_MS);
+    }
+    vTaskDelay(100 / portTICK_PERIOD_MS);
   }
 }
 

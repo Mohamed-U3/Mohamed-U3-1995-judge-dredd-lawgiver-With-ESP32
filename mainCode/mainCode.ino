@@ -35,7 +35,7 @@ void setup()
   // initializes the audio player and sets the volume
   uint8_t loopStage = LOOP_STATE_START;
   int bootAttempts = 0;
-  while (bootAttempts < 3 && !audio.begin(3))
+  while (bootAttempts < 3 && !audio.begin(15))
   {
     bootAttempts++;
     delay(3000);
@@ -45,12 +45,14 @@ void setup()
   
   //Initializing LED of Muzzle Flash
   setupmuzzleFlash(255); //the Brightness -> 255 max.
+  //Initializing LED of Front that indicate the ammo
+  setupFrontStrips(255); //the Brightness -> 255 max.
 
   //Butttons configration
-  pinMode(TRIGGER_PIN,INPUT_PULLUP);
-  pinMode(RELOAD_PIN,INPUT_PULLUP);
+  pinMode(TRIGGER_PIN,INPUT);
+  pinMode(RELOAD_PIN,INPUT);
 
-  checkButtonAtStartup(5000);
+  checkButtonAtStartup(2000);
   while(digitalRead(TRIGGER_PIN) == LOW)
   {
     Serial.println("Button still pressed plz release it");
@@ -97,7 +99,7 @@ void checkButtonAtStartup(uint32_t BUTTON_HOLD_THRESHOLD_SETUP)
 
   while (true)
   {
-    if (digitalRead(TRIGGER_PIN) == LOW)
+    if (digitalRead(TRIGGER_PIN) == HIGH)
     {
       if (!isButtonPressed)
       {
