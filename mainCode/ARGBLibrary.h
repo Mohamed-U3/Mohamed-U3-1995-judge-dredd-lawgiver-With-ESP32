@@ -71,6 +71,36 @@ void fadeOut()
   }
 }
 
+void turnOnRingLEDS(uint8_t numLEDS, uint32_t color)
+{
+  // Limit numLEDS to the maximum number of LEDs in the strip
+  if (numLEDS > RING_NUM_LEDS)
+  {
+    numLEDS = RING_NUM_LEDS;
+  }
+
+  // Clear all LEDs to 'off' (black color)
+  for (int i = 0; i < RING_NUM_LEDS; i++)
+  {
+    Ring.setPixelColor(i, 0);  // Set color of each LED to black (off)
+  }
+  for (int i = 0; i < numLEDS; i++)
+  {
+    Ring.setPixelColor(i, color);  // Set color of each LED
+  }
+  Ring.show();                     // Display the updated colors
+}
+
+void turnOffRingLEDS()
+{
+  // Clear all LEDs to 'off' (black color)
+  for (int i = 0; i < RING_NUM_LEDS; i++)
+  {
+    Ring.setPixelColor(i, 0);  // Set color of each LED to black (off)
+  }
+  Ring.show();                     // Display the updated colors
+}
+
 //****************Start**********************////****************Start**********************////****************Start**********************//
 /////////Start Code of Front Strips///////////////////Start Code of Front Strips///////////////////Start Code of Front Strips////////////////
 void setupFrontStrips(uint8_t Brightness)
@@ -100,7 +130,17 @@ void turnOnFrontLEDS(uint8_t numLEDS, uint32_t color)
   F_Strip.show();                     // Display the updated colors
 }
 
-void updateLEDBrightnessForFMJ(int fmj, uint32_t color)
+void turnOffFrontLEDS()
+{
+  // Clear all LEDs to 'off' (black color)
+  for (int i = 0; i < FRONT_LED_STRIP_CNT; i++)
+  {
+    F_Strip.setPixelColor(i, 0);  // Set color of each LED to black (off)
+  }
+  F_Strip.show();                     // Display the updated colors
+}
+
+void updateLEDBrightnessForFMJ(int fmj, uint32_t color) //Old Algorithm
 {
   int brightness;
   uint8_t r = (color >> 16) & 0xFF;
@@ -194,7 +234,7 @@ void updateLEDBrightnessForFMJ(int fmj, uint32_t color)
   F_Strip.show();  // Display the updated colors and brightness
 }
 
-void FS_LED_Animation4FMJ(int fmj, uint32_t color)
+void FS_LED_Animation4FMJ(int fmj, uint32_t color) //same algorithm of updateLEDBrightnessForFMJ() but smaller in the code excution 
 {
   int brightness = 0;
   uint8_t r = (color >> 16) & 0xFF;
@@ -250,12 +290,50 @@ void setupRearStrips(uint8_t Brightness)
   R_Strip.setBrightness(Brightness); // Set maximum brightness
 }
 
+void turnOnRearLEDS(uint8_t numLEDS, uint32_t color)
+{
+  // Limit numLEDS to the maximum number of LEDs in the strip
+  if (numLEDS > REAR_LED_STRIP_CNT)
+  {
+    numLEDS = REAR_LED_STRIP_CNT;
+  }
+
+  // Clear all LEDs to 'off' (black color)
+  for (int i = 0; i < REAR_LED_STRIP_CNT; i++)
+  {
+    R_Strip.setPixelColor(i, 0);  // Set color of each LED to black (off)
+  }
+  for (int i = 0; i < numLEDS; i++)
+  {
+    R_Strip.setPixelColor(i, color);  // Set color of each LED
+  }
+  R_Strip.show();                     // Display the updated colors
+}
+void turnOffRearLEDS()
+{
+  // Clear all LEDs to 'off' (black color)
+  for (int i = 0; i < REAR_LED_STRIP_CNT; i++)
+  {
+    R_Strip.setPixelColor(i, 0);  // Set color of each LED to black (off)
+  }
+  R_Strip.show();                     // Display the updated colors
+}
+
 ///////// End  Code of Rear Strips//////////////////// End  Code of Rear Strips/////////////////////End   Code of Rear Strips////////////////
 //****************End************************////****************End************************////****************End************************//
 
 //****************Start**********************////****************Start**********************////****************Start**********************//
 /////////Start Code of Common Functions///////////Start Code of  Common Functions/////////////Start Code of  Common Functions////////////////
-
+void All_LEDs_is_Blue()
+{
+  turnOnRingLEDS(RING_NUM_LEDS, flashColorBlue);
+  turnOnFrontLEDS(FRONT_LED_STRIP_CNT, flashColorBlue);
+  turnOnRearLEDS(REAR_LED_STRIP_CNT, flashColorBlue);
+  vTaskDelay(3000 / portTICK_PERIOD_MS);
+  turnOffRingLEDS();
+  turnOffFrontLEDS();
+  turnOffRearLEDS();
+}
 
 
 /////////END   Code of Common Functions/////////// END  Code of  Common Functions///////////// END  Code of  Common Functions////////////////

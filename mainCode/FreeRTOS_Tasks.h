@@ -106,6 +106,7 @@ void Task2code(void * parameter)
       FS_LED_Animation4FMJ(i, flashColorRed);
       vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
+    All_LEDs_is_Blue();
     vTaskDelay(100 / portTICK_PERIOD_MS);
   }
 }

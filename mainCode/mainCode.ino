@@ -53,7 +53,7 @@ void setup()
   pinMode(RELOAD_PIN,INPUT);
 
   checkButtonAtStartup(2000);
-  while(digitalRead(TRIGGER_PIN) == LOW)
+  while(digitalRead(TRIGGER_PIN) == HIGH)
   {
     Serial.println("Button still pressed plz release it");
   }
