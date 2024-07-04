@@ -35,7 +35,7 @@ void setup()
   // initializes the audio player and sets the volume
   uint8_t loopStage = LOOP_STATE_START;
   int bootAttempts = 0;
-  while (bootAttempts < 3 && !audio.begin(3))
+  while (bootAttempts < 3 && !audio.begin(15))
   {
     bootAttempts++;
     delay(3000);
@@ -45,13 +45,15 @@ void setup()
   
   //Initializing LED of Muzzle Flash
   setupmuzzleFlash(255); //the Brightness -> 255 max.
+  //Initializing LED of Front that indicate the ammo
+  setupFrontStrips(255); //the Brightness -> 255 max.
 
   //Butttons configration
-  pinMode(TRIGGER_PIN,INPUT_PULLUP);
-  pinMode(RELOAD_PIN,INPUT_PULLUP);
+  pinMode(TRIGGER_PIN,INPUT);
+  pinMode(RELOAD_PIN,INPUT);
 
-  checkButtonAtStartup(5000);
-  while(digitalRead(TRIGGER_PIN) == LOW)
+  checkButtonAtStartup(2000);
+  while(digitalRead(TRIGGER_PIN) == HIGH)
   {
     Serial.println("Button still pressed plz release it");
   }
@@ -97,7 +99,7 @@ void checkButtonAtStartup(uint32_t BUTTON_HOLD_THRESHOLD_SETUP)
 
   while (true)
   {
-    if (digitalRead(TRIGGER_PIN) == LOW)
+    if (digitalRead(TRIGGER_PIN) == HIGH)
     {
       if (!isButtonPressed)
       {
@@ -138,6 +140,7 @@ void doActionA()    // Action to perform when the button is held for 5 seconds
 {
   //- start up success and start up sounds
   audio.playTrack(AUDIO_TRACK_ID_OK);
+  All_LEDs_is_Blue();
   Serial.println("- start up success and start up sounds -> ID Ok");
 }
 
@@ -145,6 +148,7 @@ void doActionB()    // Action to perform when the button is not held for 5 secon
 {
   // start up fail, all leds flash blue and fail sound.
   audio.playTrack(AUDIO_TRACK_ID_FAIL);
+  All_LEDs_Flashes_Blue();
   Serial.println("- start up fail, all leds flash blue and fail sound. -> ID fail");
 }
 ///////////////////End OF Code Of the StartUP Check For ID Checking///////////////////////End OF Code Of the StartUP Check For ID Checking//////////////////////////

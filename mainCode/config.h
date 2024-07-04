@@ -50,10 +50,14 @@ const char DISPLAY_USER_ID[] PROGMEM =      {"Dredd"};
 
 // Pin configuration for front barrel WS2812B LED
 // set these to 0 if you want to disable the component
-#define MUZZLE_FLASH_LED_PIN    14
-#define MUZZLE_FLASH_LED_CNT    7
-#define SPECIAL_FIRE_LED_PIN    2
-#define SPECIAL_FIRE_LED_CNT    7
+#define MUZZLE_FLASH_LED_PIN    14  //pin number
+#define MUZZLE_FLASH_LED_CNT    7   //LEDs
+#define SPECIAL_FIRE_LED_PIN    2   //pin number
+#define SPECIAL_FIRE_LED_CNT    7   //LEDs
+#define FRONT_LED_STRIP_PIN     25  //pin number
+#define FRONT_LED_STRIP_CNT     5   //LEDs
+#define REAR_LED_STRIP_PIN      26  //pin number
+#define REAR_LED_STRIP_CNT      2   //LEDs
 
 //ULTRASONIC IS NOT USED HERE
 //UlTRA SONIC SENSOR PINS
