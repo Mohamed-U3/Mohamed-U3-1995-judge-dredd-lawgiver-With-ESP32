@@ -118,6 +118,14 @@ void Task2code(void * parameter)
   {
     Serial.print("selectedAmmoMode: ");
     Serial.println(selectedAmmoMode);
+    if (selectedAmmoMode == VR_CMD_AMMO_MODE_FMJ || selectedAmmoMode == VR_CMD_AMMO_MODE_RAPID)
+    {
+      FS_LED_Animation4FMJ(ammo_counters[selectedAmmoMode], flashColorRed);
+    }
+    else
+    {
+      turnOnFrontLEDS(ammo_counters[selectedAmmoMode], flashColorRed);
+    }
     //    for (signed char i = 20; i >= 0 ; i--)
     //    {
     //      FS_LED_Animation4FMJ(i, flashColorRed);
