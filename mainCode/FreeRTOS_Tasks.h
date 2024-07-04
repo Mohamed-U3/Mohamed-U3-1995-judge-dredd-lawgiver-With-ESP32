@@ -29,9 +29,9 @@ void TaskOfTriggerButton(void * parameter)
 
   for (;;)
   {
-    if (digitalRead(TRIGGER_PIN) == HIGH)
+    if (digitalRead(TRIGGER_PIN) == HIGH) //If here is for checking if it holded or just clicked
     {
-      if (!isButtonPressed)
+      if (!isButtonPressed) //No action is done here
       {
         // Button press detected
         buttonPressStartTime = xTaskGetTickCount();
@@ -40,25 +40,40 @@ void TaskOfTriggerButton(void * parameter)
       }
       else
       {
-        // Check if the button is held
-        if (!isButtonHeld && (xTaskGetTickCount() - buttonPressStartTime) > (BUTTON_HOLD_THRESHOLD / portTICK_PERIOD_MS))
+        // Check if the button is held and do some actions
+        if (!isButtonHeld && (xTaskGetTickCount() - buttonPressStartTime) > (BUTTON_HOLD_THRESHOLD / portTICK_PERIOD_MS)) //action is done here
         {
           isButtonHeld = true;
           // Do action for button hold
-          playSelectedTrack(AMMO_MODE_IDX_FIRE);
-          muzzleFlash(flashColorRed, 5);
+          //change ammo type for now (for testing)
+          selectedAmmoMode++;
+          if (selectedAmmoMode == 6) selectedAmmoMode = 0;
+          playSelectedTrack(AMMO_MODE_IDX_CHGE);
+          Serial.print("ammo:");
+          Serial.println(selectedAmmoMode);
         }
       }
     }
-    else
+    else //Else here is For checking the result of clicking only and then do some actions (After release but didn't reach hold time)
     {
       if (isButtonPressed)
       {
-        if (!isButtonHeld)
+        //action is done here
+        if (!isButtonHeld) // Button is just clicked not holded
         {
-          // Do action for button click
-          playSelectedTrack(AMMO_MODE_IDX_FIRE);
-          muzzleFlash(flashColorGreen, 3);
+          if (ammo_counters[selectedAmmoMode] > 0)
+          {
+            // Do action for button click
+            playSelectedTrack(AMMO_MODE_IDX_FIRE);
+            muzzleFlash(flashColorGreen, 3);
+            ammo_counters[selectedAmmoMode] -= 1;
+          }
+          else
+          {
+            playSelectedTrack(AMMO_MODE_IDX_EMTY);
+          }
+          Serial.print("Ammo Count: ");
+          Serial.println(ammo_counters[selectedAmmoMode]);
         }
         // Reset button state
         isButtonPressed = false;
@@ -78,15 +93,16 @@ void TaskOfReloadButton(void * parameter)
   {
     if (digitalRead(RELOAD_PIN) == HIGH)
     {
-      selectedAmmoMode++;
-      if (selectedAmmoMode == 7) selectedAmmoMode = 0;
-      Serial.print("ammo:");
-      Serial.println(selectedAmmoMode);
+      if (selectedAmmoMode == VR_CMD_AMMO_MODE_FMJ || selectedAmmoMode == VR_CMD_AMMO_MODE_RAPID)
+      {
+        ammo_counters[selectedAmmoMode] = 20;
+      }
+      else
+      {
+        ammo_counters[selectedAmmoMode] = 5;
+      }
+      audio.playTrack(AUDIO_TRACK_AMMO_RELOAD);
       muzzleFlash(flashColorBlue, 2);
-      //      if (xSemaphoreTake(mutex_Reload_button, 0) == pdTRUE)
-      //      {
-      //        xSemaphoreGive(semaphore_Reload_button);  // Give the semaphore when button is pressed
-      //      }
     }
     else
     {
@@ -98,16 +114,24 @@ void TaskOfReloadButton(void * parameter)
 // Task 2:
 void Task2code(void * parameter)
 {
-  while (true)
+  for (;;)
   {
-    Serial.println("Task2");
-//    for (signed char i = 20; i >= 0 ; i--)
-//    {
-//      FS_LED_Animation4FMJ(i, flashColorRed);
-//      vTaskDelay(1000 / portTICK_PERIOD_MS);
-//    }
+    Serial.print("selectedAmmoMode: ");
+    Serial.println(selectedAmmoMode);
+    //    for (signed char i = 20; i >= 0 ; i--)
+    //    {
+    //      FS_LED_Animation4FMJ(i, flashColorRed);
+    //      vTaskDelay(1000 / portTICK_PERIOD_MS);
+    //    }
     //    All_LEDs_is_Blue();
-    vTaskDelay(100 / portTICK_PERIOD_MS);
+    //    for(int i=1; i<21;i++)
+    //    {
+    //      Serial.print("AUDIO: ");
+    //      Serial.println(i);
+    //      audio.playTrack(i);
+    //      vTaskDelay(3000 / portTICK_PERIOD_MS);
+    //    }
+    vTaskDelay(500 / portTICK_PERIOD_MS);
   }
 }
 

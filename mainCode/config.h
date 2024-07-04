@@ -79,42 +79,43 @@ const char DISPLAY_USER_ID[] PROGMEM =      {"Dredd"};
  * 1. Copy the audio file in each slot where you want to use it
  * 2. Change the index values below to match the files on the SD Card
  */
-static const int  AUDIO_TRACK_DNA_CHK      =   1;
-static const int  AUDIO_TRACK_ID_OK        =   2;
-static const int  AUDIO_TRACK_ID_FAIL      =   3;
-static const int  AUDIO_TRACK_AMMO_LOAD    =   4;
-static const int  AUDIO_TRACK_AP_FIRE      =   5;
-static const int  AUDIO_TRACK_IN_FIRE      =   6;
-static const int  AUDIO_TRACK_HS_FIRE      =   7;
-static const int  AUDIO_TRACK_HE_FIRE      =   8;
-static const int  AUDIO_TRACK_ST_FIRE      =   9;
-static const int  AUDIO_TRACK_FMJ_FIRE     =   10;
-static const int  AUDIO_TRACK_RAPID_FIRE   =   11;
-static const int  AUDIO_TRACK_AP_CHANGE    =   12;
-static const int  AUDIO_TRACK_IN_CHANGE    =   13;
-static const int  AUDIO_TRACK_HS_CHANGE    =   14;
-static const int  AUDIO_TRACK_HE_CHANGE    =   15;
-static const int  AUDIO_TRACK_ST_CHANGE    =   16;
-static const int  AUDIO_TRACK_FMJ_CHANGE   =   17;
-static const int  AUDIO_TRACK_RAPID_CHANGE =   18;
-static const int  AUDIO_TRACK_AMMO_LOW     =   19;
-static const int  AUDIO_TRACK_AMMO_EMPTY   =   20;
-static const int  AUDIO_TRACK_AMMO_RELOAD  =   21;
-static const int  AUDIO_TRACK_SILENCE      =   22;
-static const int  AUDIO_TRACK_THEME        =   23;  // TODO: add feature to playback theme
+
+static const int  AUDIO_TRACK_DNA_CHK         =   1;
+static const int  AUDIO_TRACK_ID_OK           =   2;
+static const int  AUDIO_TRACK_ID_FAIL         =   3;
+static const int  AUDIO_TRACK_AMMO_LOAD       =   4;
+
+static const int  AUDIO_TRACK_GRENADE_FIRE    =   5;//Grenade
+static const int  AUDIO_TRACK_AP_FIRE         =   6;//Armor Piercing
+static const int  AUDIO_TRACK_DW_FIRE         =   7;//Double Whammy
+static const int  AUDIO_TRACK_SF_FIRE         =   8;//Signal Flare
+static const int  AUDIO_TRACK_FMJ_FIRE        =   9;//Full metal jacket
+static const int  AUDIO_TRACK_RAPID_FIRE      =   10;//Rapid-Fire
+
+static const int  AUDIO_TRACK_GRENADE_CHANGE  =   11;//Grenade
+static const int  AUDIO_TRACK_AP_CHANGE       =   12;//Armor Piercing
+static const int  AUDIO_TRACK_DW_CHANGE       =   13;//Double Whammy
+static const int  AUDIO_TRACK_SF_CHANGE       =   14;//Signal Flare
+static const int  AUDIO_TRACK_FMJ_CHANGE      =   15;//Full metal jacket
+static const int  AUDIO_TRACK_RAPID_CHANGE    =   16;//Rapid-Fire
+
+static const int  AUDIO_TRACK_AMMO_LOW        =   17;
+static const int  AUDIO_TRACK_AMMO_EMPTY      =   18;
+static const int  AUDIO_TRACK_AMMO_RELOAD     =   19;
+static const int  AUDIO_TRACK_SILENCE         =   20;
+static const int  AUDIO_TRACK_THEME           =   21;  // TODO: add feature to playback theme
 
 
 /**
  *  Voice Recognition Commands.
  *  IMPORTANT - The VR module must be trained this sequence.
  */
-static const uint8_t VR_CMD_AMMO_MODE_AP     =    0; // speak "Armor Piercing" or just "Armor"
-static const uint8_t VR_CMD_AMMO_MODE_IN     =    1; // speak "Incendiary"
-static const uint8_t VR_CMD_AMMO_MODE_HS     =    2; // speak "Hotshot"
-static const uint8_t VR_CMD_AMMO_MODE_HE     =    3; // speak "High Ex"
-static const uint8_t VR_CMD_AMMO_MODE_ST     =    4; // speak "Stun"
-static const uint8_t VR_CMD_AMMO_MODE_FMJ    =    5; // speak "Full Metal"
-static const uint8_t VR_CMD_AMMO_MODE_RAPID  =    6; // speak "Rapid"
+static const uint8_t VR_CMD_AMMO_MODE_GRENADE =    0; // speak "Grenade"
+static const uint8_t VR_CMD_AMMO_MODE_AP      =    1; // speak "Armor Piercing" or just "Armor"
+static const uint8_t VR_CMD_AMMO_MODE_DW      =    2; // speak "Double Whammy"
+static const uint8_t VR_CMD_AMMO_MODE_SF      =    3; // speak "Signal Flare"
+static const uint8_t VR_CMD_AMMO_MODE_FMJ     =    4; // speak "Full Metal"
+static const uint8_t VR_CMD_AMMO_MODE_RAPID   =    5; // speak "Rapid"
 
 /**
  * Timing Defintions for start up sequence timings
@@ -135,8 +136,8 @@ static const long  TIMING_FAST_BLINK_WAIT_MS    =    350L;
  * These are only useful if the autoload feature is not enabled.
  * See code comments in the EasyVoice.begins() function.
  */
-static const uint8_t VOICE_CMD_ARR_SZ   = 7;
-static const uint8_t VOICE_CMD_ARR[]    = {VR_CMD_AMMO_MODE_AP, VR_CMD_AMMO_MODE_IN, VR_CMD_AMMO_MODE_HS, VR_CMD_AMMO_MODE_HE, VR_CMD_AMMO_MODE_ST, VR_CMD_AMMO_MODE_FMJ, VR_CMD_AMMO_MODE_RAPID};
+static const uint8_t VOICE_CMD_ARR_SZ   = 6;
+static const uint8_t VOICE_CMD_ARR[]    = {VR_CMD_AMMO_MODE_GRENADE, VR_CMD_AMMO_MODE_AP, VR_CMD_AMMO_MODE_DW, VR_CMD_AMMO_MODE_SF, VR_CMD_AMMO_MODE_FMJ, VR_CMD_AMMO_MODE_RAPID};
 
 /**
  * Defintions for tracking startup sequence. DO NOT CHANGE
@@ -156,14 +157,13 @@ static const uint8_t AMMO_MODE_IDX_CHGE  =      2;  // change mode
 /**
  * Lookup array for audio tracks based on ammo mode. DO NOT CHANGE
  */
-static const uint8_t AUDIO_TRACK_AMMO_MODE_ARR[7][3]  =  {
-  {AUDIO_TRACK_AP_FIRE,    AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_AP_CHANGE},
-  {AUDIO_TRACK_IN_FIRE,    AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_IN_CHANGE},
-  {AUDIO_TRACK_HS_FIRE,    AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_HS_CHANGE},
-  {AUDIO_TRACK_HE_FIRE,    AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_HE_CHANGE},
-  {AUDIO_TRACK_ST_FIRE,    AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_ST_CHANGE},
-  {AUDIO_TRACK_FMJ_FIRE,   AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_FMJ_CHANGE},
-  {AUDIO_TRACK_RAPID_FIRE, AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_RAPID_CHANGE}
+static const uint8_t AUDIO_TRACK_AMMO_MODE_ARR[6][3]  =  {
+  {AUDIO_TRACK_GRENADE_FIRE,    AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_GRENADE_CHANGE},
+  {AUDIO_TRACK_AP_FIRE,         AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_AP_CHANGE},
+  {AUDIO_TRACK_DW_FIRE,         AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_DW_CHANGE},
+  {AUDIO_TRACK_SF_FIRE,         AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_SF_CHANGE},
+  {AUDIO_TRACK_FMJ_FIRE,        AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_FMJ_CHANGE},
+  {AUDIO_TRACK_RAPID_FIRE,      AUDIO_TRACK_AMMO_EMPTY, AUDIO_TRACK_RAPID_CHANGE}
 };
 
 /**

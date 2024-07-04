@@ -19,8 +19,9 @@ EasyVoice<VOICE_CMD_ARR, VOICE_CMD_ARR_SZ> voice(VOICE_RX_PIN, VOICE_TX_PIN);
 
 void playSelectedTrack(uint8_t trackIdx);
 uint8_t getSelectedTrack(uint8_t idx);
+//Variable related to Ammunition
 volatile uint8_t selectedAmmoMode = VR_CMD_AMMO_MODE_FMJ; // sets the ammo mode to start
-
+uint8_t ammo_counters[6] = {5, 5, 5, 5, 20, 20}; //Ammunition types in order ->  #0- Grenade   #1- Rapid-Fire    #2- Armor Piercing    #3- Double Whammy     #4- Signal Flare    #5-FMJ      #6-RAPID
 #include "FreeRTOS_Tasks.h"
 
 void setup()

@@ -459,7 +459,7 @@ void fadeOutALL()
     R_Strip.show();
 //    vTaskDelay(1 / portTICK_PERIOD_MS); // Adjust this for faster or slower fading
   }
-  vTaskDelay(85 / portTICK_PERIOD_MS); // short delay after the fading
+  vTaskDelay(70 / portTICK_PERIOD_MS); // short delay after the fading
 }
 
 void fadeOutALLwithDelay(uint8_t duration)
@@ -522,7 +522,7 @@ void All_LEDs_is_Blue()
 
 void All_LEDs_Flashes_Blue()
 {
-  All_LEDs_Flash(flashColorBlue, 30);
+  All_LEDs_Flash(flashColorBlue, 20);
 }
 
 
