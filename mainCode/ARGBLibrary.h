@@ -15,8 +15,6 @@ Adafruit_NeoPixel Ring    = Adafruit_NeoPixel(RING_NUM_LEDS,        RING_LED_PIN
 Adafruit_NeoPixel F_Strip = Adafruit_NeoPixel(FRONT_LED_STRIP_CNT , FRONT_LED_STRIP_PIN , NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel R_Strip = Adafruit_NeoPixel(REAR_LED_STRIP_CNT  , REAR_LED_STRIP_PIN  , NEO_GRB + NEO_KHZ800);
 
-void flash(uint32_t);
-void fadeOut();
 
 // Define the colors for the flash
 const uint32_t flashColorRed    = Ring.Color(255, 0, 0);       // Red
@@ -36,30 +34,24 @@ void setupmuzzleFlash(uint8_t Brightness)
   Ring.show();             // Initialize all pixels to 'off'
   Ring.setBrightness(Brightness); // Set maximum brightness
 }
-void muzzleFlash(uint32_t color, uint8_t flashes_count)
-{
-  for (int i = 0; i < flashes_count; i++)
-  { // Repeat n_flashes times
-    flash(color);
-    fadeOut();
-    vTaskDelay(10 / portTICK_PERIOD_MS); // Short delay between flashes
-  }
-}
 
-void flash(uint32_t color)
+void flashRing(uint32_t color)
 {
   // Turn all LEDs to the flash color
-  for (int i = 0; i < RING_NUM_LEDS; i++) {
+  for (int i = 0; i < RING_NUM_LEDS; i++)
+  {
     Ring.setPixelColor(i, color);
   }
   Ring.show();
   vTaskDelay(1 / portTICK_PERIOD_MS); // Flash duration
 }
 
-void fadeOut()
+void fadeOutRing()
 {
-  for (int brightness = 255; brightness >= 0; brightness -= 5) {
-    for (int i = 0; i < RING_NUM_LEDS; i++) {
+  for (int brightness = 255; brightness >= 0; brightness -= 5)
+  {
+    for (int i = 0; i < RING_NUM_LEDS; i++)
+    {
       uint32_t color = Ring.getPixelColor(i);
       uint8_t r = (color >> 16) & 0xFF;
       uint8_t g = (color >> 8) & 0xFF;
@@ -68,6 +60,16 @@ void fadeOut()
     }
     Ring.show();
     vTaskDelay(1 / portTICK_PERIOD_MS); // Adjust this for faster or slower fading
+  }
+}
+
+void muzzleFlash(uint32_t color, uint8_t flashes_count)
+{
+  for (int i = 0; i < flashes_count; i++)
+  { // Repeat n_flashes times
+    flashRing(color);
+    fadeOutRing();
+    vTaskDelay(10 / portTICK_PERIOD_MS); // Short delay between flashes
   }
 }
 
@@ -109,6 +111,46 @@ void setupFrontStrips(uint8_t Brightness)
   F_Strip.show();             // Initialize all pixels to 'off'
   F_Strip.setBrightness(Brightness); // Set maximum brightness
 }
+////////////////////////////////////////////////////////////////////////////////////////////
+
+void flashFS(uint32_t color)
+{
+  // Turn all LEDs to the flash color
+  for (int i = 0; i < FRONT_LED_STRIP_CNT; i++)
+  {
+    F_Strip.setPixelColor(i, color);
+  }
+  F_Strip.show();
+  vTaskDelay(1 / portTICK_PERIOD_MS); // Flash duration
+}
+
+void fadeOutFS()
+{
+  for (int brightness = 255; brightness >= 0; brightness -= 5)
+  {
+    for (int i = 0; i < FRONT_LED_STRIP_CNT; i++)
+    {
+      uint32_t color = F_Strip.getPixelColor(i);
+      uint8_t r = (color >> 16) & 0xFF;
+      uint8_t g = (color >> 8) & 0xFF;
+      uint8_t b = color & 0xFF;
+      F_Strip.setPixelColor(i, F_Strip.Color(r * brightness / 255, g * brightness / 255, b * brightness / 255));
+    }
+    F_Strip.show();
+    vTaskDelay(1 / portTICK_PERIOD_MS); // Adjust this for faster or slower fading
+  }
+}
+
+void FrontStripFlash(uint32_t color, uint8_t flashes_count)
+{
+  for (int i = 0; i < flashes_count; i++)
+  { // Repeat n_flashes times
+    flashFS(color);
+    fadeOutFS();
+    vTaskDelay(10 / portTICK_PERIOD_MS); // Short delay between flashes
+  }
+}
+////////////////////////////////////////////////////////////////////////////////////////////
 
 void turnOnFrontLEDS(uint8_t numLEDS, uint32_t color)
 {
@@ -290,6 +332,45 @@ void setupRearStrips(uint8_t Brightness)
   R_Strip.setBrightness(Brightness); // Set maximum brightness
 }
 
+//////////Flash///////Flash////////////Flash/////////////Flash//////////////Flash///////////
+
+void flashRS(uint32_t color)
+{
+  // Turn all LEDs to the flash color
+  for (int i = 0; i < REAR_LED_STRIP_CNT; i++)
+  {
+    R_Strip.setPixelColor(i, color);
+  }
+  R_Strip.show();
+  vTaskDelay(1 / portTICK_PERIOD_MS); // Flash duration
+}
+
+void fadeOutRS()
+{
+  for (int brightness = 255; brightness >= 0; brightness -= 5) {
+    for (int i = 0; i < REAR_LED_STRIP_CNT; i++) {
+      uint32_t color = F_Strip.getPixelColor(i);
+      uint8_t r = (color >> 16) & 0xFF;
+      uint8_t g = (color >> 8) & 0xFF;
+      uint8_t b = color & 0xFF;
+      R_Strip.setPixelColor(i, R_Strip.Color(r * brightness / 255, g * brightness / 255, b * brightness / 255));
+    }
+    R_Strip.show();
+    vTaskDelay(1 / portTICK_PERIOD_MS); // Adjust this for faster or slower fading
+  }
+}
+
+void RearStripFlash(uint32_t color, uint8_t flashes_count)
+{
+  for (int i = 0; i < flashes_count; i++)
+  { // Repeat n_flashes times
+    flashRS(color);
+    fadeOutRS();
+    vTaskDelay(10 / portTICK_PERIOD_MS); // Short delay between flashes
+  }
+}
+///////Flash//////////////Flash////////////Flash//////////////Flash//////////////Flash//////
+
 void turnOnRearLEDS(uint8_t numLEDS, uint32_t color)
 {
   // Limit numLEDS to the maximum number of LEDs in the strip
@@ -324,15 +405,124 @@ void turnOffRearLEDS()
 
 //****************Start**********************////****************Start**********************////****************Start**********************//
 /////////Start Code of Common Functions///////////Start Code of  Common Functions/////////////Start Code of  Common Functions////////////////
+void flashALL(uint32_t color)
+{
+  // Turn all LEDs to the flash color
+  for (int i = 0; i < REAR_LED_STRIP_CNT; i++)
+  {
+    R_Strip.setPixelColor(i, color);
+  }
+  for (int i = 0; i < FRONT_LED_STRIP_CNT; i++)
+  {
+    F_Strip.setPixelColor(i, color);
+  }
+  for (int i = 0; i < RING_NUM_LEDS; i++)
+  {
+    Ring.setPixelColor(i, color);
+  }
+  Ring.show();
+  F_Strip.show();
+  R_Strip.show();
+  vTaskDelay(1 / portTICK_PERIOD_MS); // Flash duration
+}
+
+void fadeOutALL()
+{
+  for (int brightness = 255; brightness >= 0; brightness -= 50)
+  {
+    for (int i = 0; i < REAR_LED_STRIP_CNT; i++)
+    {
+      uint32_t color = F_Strip.getPixelColor(i);
+      uint8_t r = (color >> 16) & 0xFF;
+      uint8_t g = (color >> 8) & 0xFF;
+      uint8_t b = color & 0xFF;
+      R_Strip.setPixelColor(i, R_Strip.Color(r * brightness / 255, g * brightness / 255, b * brightness / 255));
+    }
+    for (int i = 0; i < RING_NUM_LEDS; i++)
+    {
+      uint32_t color = Ring.getPixelColor(i);
+      uint8_t r = (color >> 16) & 0xFF;
+      uint8_t g = (color >> 8) & 0xFF;
+      uint8_t b = color & 0xFF;
+      Ring.setPixelColor(i, Ring.Color(r * brightness / 255, g * brightness / 255, b * brightness / 255));
+    }
+    for (int i = 0; i < FRONT_LED_STRIP_CNT; i++)
+    {
+      uint32_t color = F_Strip.getPixelColor(i);
+      uint8_t r = (color >> 16) & 0xFF;
+      uint8_t g = (color >> 8) & 0xFF;
+      uint8_t b = color & 0xFF;
+      F_Strip.setPixelColor(i, F_Strip.Color(r * brightness / 255, g * brightness / 255, b * brightness / 255));
+    }
+    F_Strip.show();
+    Ring.show();
+    R_Strip.show();
+//    vTaskDelay(1 / portTICK_PERIOD_MS); // Adjust this for faster or slower fading
+  }
+  vTaskDelay(85 / portTICK_PERIOD_MS); // short delay after the fading
+}
+
+void fadeOutALLwithDelay(uint8_t duration)
+{
+  for (int brightness = 255; brightness >= 0; brightness -= 1)
+  {
+    for (int i = 0; i < REAR_LED_STRIP_CNT; i++)
+    {
+      uint32_t color = F_Strip.getPixelColor(i);
+      uint8_t r = (color >> 16) & 0xFF;
+      uint8_t g = (color >> 8) & 0xFF;
+      uint8_t b = color & 0xFF;
+      R_Strip.setPixelColor(i, R_Strip.Color(r * brightness / 255, g * brightness / 255, b * brightness / 255));
+    }
+    for (int i = 0; i < RING_NUM_LEDS; i++)
+    {
+      uint32_t color = Ring.getPixelColor(i);
+      uint8_t r = (color >> 16) & 0xFF;
+      uint8_t g = (color >> 8) & 0xFF;
+      uint8_t b = color & 0xFF;
+      Ring.setPixelColor(i, Ring.Color(r * brightness / 255, g * brightness / 255, b * brightness / 255));
+    }
+    for (int i = 0; i < FRONT_LED_STRIP_CNT; i++)
+    {
+      uint32_t color = F_Strip.getPixelColor(i);
+      uint8_t r = (color >> 16) & 0xFF;
+      uint8_t g = (color >> 8) & 0xFF;
+      uint8_t b = color & 0xFF;
+      F_Strip.setPixelColor(i, F_Strip.Color(r * brightness / 255, g * brightness / 255, b * brightness / 255));
+    }
+    F_Strip.show();
+    Ring.show();
+    R_Strip.show();
+    if(brightness <= 205)
+    {
+      brightness = 0;
+    }
+    vTaskDelay(duration / portTICK_PERIOD_MS); // Adjust this for faster or slower fading
+  }
+}
+
+void All_LEDs_Flash(uint32_t color, uint8_t flashes_count)
+{
+  for (int i = 0; i < flashes_count; i++)
+  { // Repeat n_flashes times
+    flashALL(color);
+    fadeOutALL();
+    vTaskDelay(1 / portTICK_PERIOD_MS); // Short delay between flashes
+  }
+}
+
 void All_LEDs_is_Blue()
 {
   turnOnRingLEDS(RING_NUM_LEDS, flashColorBlue);
   turnOnFrontLEDS(FRONT_LED_STRIP_CNT, flashColorBlue);
   turnOnRearLEDS(REAR_LED_STRIP_CNT, flashColorBlue);
-  vTaskDelay(3000 / portTICK_PERIOD_MS);
-  turnOffRingLEDS();
-  turnOffFrontLEDS();
-  turnOffRearLEDS();
+  fadeOutALLwithDelay(50);
+  All_LEDs_Flash(flashColorBlue, 3);
+}
+
+void All_LEDs_Flashes_Blue()
+{
+  All_LEDs_Flash(flashColorBlue, 30);
 }
 
 

@@ -140,6 +140,7 @@ void doActionA()    // Action to perform when the button is held for 5 seconds
 {
   //- start up success and start up sounds
   audio.playTrack(AUDIO_TRACK_ID_OK);
+  All_LEDs_is_Blue();
   Serial.println("- start up success and start up sounds -> ID Ok");
 }
 
@@ -147,6 +148,7 @@ void doActionB()    // Action to perform when the button is not held for 5 secon
 {
   // start up fail, all leds flash blue and fail sound.
   audio.playTrack(AUDIO_TRACK_ID_FAIL);
+  All_LEDs_Flashes_Blue();
   Serial.println("- start up fail, all leds flash blue and fail sound. -> ID fail");
 }
 ///////////////////End OF Code Of the StartUP Check For ID Checking///////////////////////End OF Code Of the StartUP Check For ID Checking//////////////////////////

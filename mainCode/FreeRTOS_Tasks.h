@@ -98,15 +98,15 @@ void TaskOfReloadButton(void * parameter)
 // Task 2:
 void Task2code(void * parameter)
 {
-  while(true)
+  while (true)
   {
     Serial.println("Task2");
-    for(signed char i = 20; i>=0 ;i--)
-    {
-      FS_LED_Animation4FMJ(i, flashColorRed);
-      vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
-    All_LEDs_is_Blue();
+//    for (signed char i = 20; i >= 0 ; i--)
+//    {
+//      FS_LED_Animation4FMJ(i, flashColorRed);
+//      vTaskDelay(1000 / portTICK_PERIOD_MS);
+//    }
+    //    All_LEDs_is_Blue();
     vTaskDelay(100 / portTICK_PERIOD_MS);
   }
 }
