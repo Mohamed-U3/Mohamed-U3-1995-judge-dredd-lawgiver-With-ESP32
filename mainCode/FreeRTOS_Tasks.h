@@ -16,6 +16,7 @@ SemaphoreHandle_t mutex_Reload_button;
 TaskHandle_t Task1;
 TaskHandle_t Task2;
 TaskHandle_t Task3;
+TaskHandle_t Task4;
 
 // Constants for detecting button click or hold
 const static uint32_t BUTTON_HOLD_THRESHOLD = 1000; // Time in milliseconds to consider the button as held
@@ -112,7 +113,7 @@ void TaskOfReloadButton(void * parameter)
 }
 
 // Task 2:
-void Task2code(void * parameter)
+void TaskOfFrontStripAmmoCounter(void * parameter)
 {
   for (;;)
   {
@@ -126,20 +127,17 @@ void Task2code(void * parameter)
     {
       turnOnFrontLEDS(ammo_counters[selectedAmmoMode], flashColorRed);
     }
-    //    for (signed char i = 20; i >= 0 ; i--)
-    //    {
-    //      FS_LED_Animation4FMJ(i, flashColorRed);
-    //      vTaskDelay(1000 / portTICK_PERIOD_MS);
-    //    }
-    //    All_LEDs_is_Blue();
-    //    for(int i=1; i<21;i++)
-    //    {
-    //      Serial.print("AUDIO: ");
-    //      Serial.println(i);
-    //      audio.playTrack(i);
-    //      vTaskDelay(3000 / portTICK_PERIOD_MS);
-    //    }
     vTaskDelay(500 / portTICK_PERIOD_MS);
+  }
+}
+
+// Task 4:
+void TaskOfVoiceRecognitionChecking(void * parameter)
+{
+  for (;;)
+  {
+    checkVoiceCommands();
+    vTaskDelay(10 / portTICK_PERIOD_MS);
   }
 }
 
@@ -173,7 +171,7 @@ void SetupFreeRTOS()
     0);                     // Core to run the task on (0 or 1)
 
   xTaskCreatePinnedToCore(
-    Task2code,
+    TaskOfFrontStripAmmoCounter,
     "Task2",
     10000,
     NULL,
@@ -189,6 +187,15 @@ void SetupFreeRTOS()
     2,                      // Task priority
     &Task3,                 // Task handle
     0);                     // Core to run the task on (0 or 1)
+
+  xTaskCreatePinnedToCore(
+    TaskOfVoiceRecognitionChecking, // Function to be called
+    "Task3",                        // Name of task
+    5000,                           // Stack size (bytes)
+    NULL,                           // Parameter to pass
+    2,                              // Task priority
+    &Task4,                         // Task handle
+    1);                             // Core to run the task on (0 or 1)
 }
 
 #endif //FREERTOS_TASKS_H

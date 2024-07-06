@@ -19,6 +19,8 @@ EasyVoice<VOICE_CMD_ARR, VOICE_CMD_ARR_SZ> voice(VOICE_RX_PIN, VOICE_TX_PIN);
 
 void playSelectedTrack(uint8_t trackIdx);
 uint8_t getSelectedTrack(uint8_t idx);
+void checkVoiceCommands(void);
+void changeAmmoMode(int Mode);
 //Variable related to Ammunition
 volatile uint8_t selectedAmmoMode = VR_CMD_AMMO_MODE_FMJ; // sets the ammo mode to start
 uint8_t ammo_counters[6] = {5, 5, 5, 5, 20, 20}; //Ammunition types in order ->  #0- Grenade   #1- Armor Piercing    #2- Double Whammy    #3- Signal Flare    #4-FMJ      #5-RAPID
@@ -154,3 +156,52 @@ void doActionB()    // Action to perform when the button is not held for 5 secon
 }
 ///////////////////End OF Code Of the StartUP Check For ID Checking///////////////////////End OF Code Of the StartUP Check For ID Checking//////////////////////////
 //**********END*************//StartUP Check//************************END**************************************//StartUP Check//*************END*******************//
+
+
+//*********Start*********//VoiceCommands//**************************Start************************************//VoiceCommands//**************Start*****************//
+///////////////////Start OF Code Of the VoiceCommands and Change Ammo Types ///////////Start OF Code Of the VoiceCommands and Change Ammo Types ////////////////////
+/**
+ *  Checks the voice recognition module for new voice commands
+ *  1. change the selected ammo mode
+ *  2. initialize the LED sequence
+ *  3. queue playback
+ *. 4. set screen refresh
+ */
+void checkVoiceCommands(void)
+{
+  int cmd = voice.readCommand();
+
+  if (cmd > -1)
+  {
+    changeAmmoMode(cmd);
+  }
+}
+
+/**
+ *  1. Set the selected ammo mode
+ *  2. Initialize the LED sequence
+ *  3. Queue playback
+ *  4. Set screen refresh
+ */
+void changeAmmoMode(int Mode)
+{
+  if (Mode > -1 && Mode < 6)
+  {
+    selectedAmmoMode = Mode;
+    // Check for Switching modes
+    switch (selectedAmmoMode)
+    {
+      case VR_CMD_AMMO_MODE_GRENADE:    /* Action */      break;  //"Grenade"
+      case VR_CMD_AMMO_MODE_AP:         /* Action */      break;  //"Armor Piercing" or just "Armor"
+      case VR_CMD_AMMO_MODE_DW:         /* Action */      break;  //"Double Whammy"
+      case VR_CMD_AMMO_MODE_SF:         /* Action */      break;  //"Signal Flare"
+      case VR_CMD_AMMO_MODE_FMJ:        /* Action */      break;  //"Full Metal"
+      case VR_CMD_AMMO_MODE_RAPID:      /* Action */      break;  //"Rapid"
+      default:                          /* Action */      break;
+    }
+    
+    playSelectedTrack(AMMO_MODE_IDX_CHGE);
+  }
+}
+/////////////////// END  OF Code Of the VoiceCommands and Change Ammo Types /////////// END  OF Code Of the VoiceCommands and Change Ammo Types ////////////////////
+//*********END***********//VoiceCommands//**************************END**************************************//VoiceCommands//**************END*******************//
