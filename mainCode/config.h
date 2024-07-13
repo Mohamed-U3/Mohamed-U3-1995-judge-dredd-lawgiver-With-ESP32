@@ -29,9 +29,10 @@ const char DISPLAY_USER_ID[] PROGMEM =      {"Dredd"};
 #define AUDIO_RX_PIN          32
 #define AUDIO_TX_PIN          33
 
+//These two leds are not used.
 // Pin Configuration for 3mm LEDs
-#define BLUE_LED_PIN          2
-#define RED_LED_PIN           4
+//#define BLUE_LED_PIN          2
+//#define RED_LED_PIN           4
 
 // Pin configuration for all momentary triggers
 #define TRIGGER_PIN           34

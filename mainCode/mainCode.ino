@@ -50,6 +50,8 @@ void setup()
   setupmuzzleFlash(255); //the Brightness -> 255 max.
   //Initializing LED of Front that indicate the ammo
   setupFrontStrips(255); //the Brightness -> 255 max.
+  //Initializing LED of Rear that indicate the ammo
+  setupRearStrips(255); //the Brightness -> 255 max.
 
   //Butttons configration
   pinMode(TRIGGER_PIN,INPUT);
@@ -60,7 +62,8 @@ void setup()
   {
     Serial.println("Button still pressed plz release it");
   }
-  delay(500); // for debuncing 
+  delay(500); // for debuncing
+  turnOnRearLEDsRedBlue(); 
   SetupFreeRTOS();
 }
 

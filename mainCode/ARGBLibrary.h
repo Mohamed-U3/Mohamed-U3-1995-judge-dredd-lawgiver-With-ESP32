@@ -400,6 +400,13 @@ void turnOffRearLEDS()
   R_Strip.show();                     // Display the updated colors
 }
 
+void turnOnRearLEDsRedBlue()
+{
+  R_Strip.setPixelColor(0, flashColorRed);  
+  R_Strip.setPixelColor(1, flashColorBlue);  
+  R_Strip.show();                     // Display the updated colors
+}
+
 ///////// End  Code of Rear Strips//////////////////// End  Code of Rear Strips/////////////////////End   Code of Rear Strips////////////////
 //****************End************************////****************End************************////****************End************************//
 
