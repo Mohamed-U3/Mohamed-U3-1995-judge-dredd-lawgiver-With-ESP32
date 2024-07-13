@@ -4,7 +4,7 @@
 #define MINI_BAUD_RATE 9600
 #define PRO_BAUD_RATE 115200
 // uncomment if you are using the DFPlayer Pro
-//#define ENABLE_EASY_AUDIO_PRO
+#define ENABLE_EASY_AUDIO_PRO
 
 #include <SoftwareSerial.h>
 #ifdef ENABLE_EASY_AUDIO_PRO

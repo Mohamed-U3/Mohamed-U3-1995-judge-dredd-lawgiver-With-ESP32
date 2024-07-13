@@ -22,8 +22,8 @@ const char DISPLAY_USER_ID[] PROGMEM =      {"Dredd"};
 
 
 // Pin configuration for voice recognition module
-#define VOICE_RX_PIN          17
-#define VOICE_TX_PIN          16
+#define VOICE_RX_PIN          16
+#define VOICE_TX_PIN          17
 
 // Pin configuration for MP3 Player
 #define AUDIO_RX_PIN          32
@@ -54,9 +54,9 @@ const char DISPLAY_USER_ID[] PROGMEM =      {"Dredd"};
 #define MUZZLE_FLASH_LED_CNT    7   //LEDs
 #define SPECIAL_FIRE_LED_PIN    2   //pin number
 #define SPECIAL_FIRE_LED_CNT    7   //LEDs
-#define FRONT_LED_STRIP_PIN     25  //pin number
+#define FRONT_LED_STRIP_PIN     23  //pin number
 #define FRONT_LED_STRIP_CNT     5   //LEDs
-#define REAR_LED_STRIP_PIN      26  //pin number
+#define REAR_LED_STRIP_PIN      25  //pin number
 #define REAR_LED_STRIP_CNT      2   //LEDs
 
 //ULTRASONIC IS NOT USED HERE
