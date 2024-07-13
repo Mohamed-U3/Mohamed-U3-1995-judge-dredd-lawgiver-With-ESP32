@@ -172,6 +172,28 @@ void turnOnFrontLEDS(uint8_t numLEDS, uint32_t color)
   F_Strip.show();                     // Display the updated colors
 }
 
+void turnOnFrontLEDs_1by1(uint8_t numLEDS, uint32_t color)
+{
+  // Limit numLEDS to the maximum number of LEDs in the strip
+  if (numLEDS > FRONT_LED_STRIP_CNT)
+  {
+    numLEDS = FRONT_LED_STRIP_CNT;
+  }
+
+  // Clear all LEDs to 'off' (black color)
+  for (int i = 0; i < FRONT_LED_STRIP_CNT; i++)
+  {
+    F_Strip.setPixelColor(i, 0);  // Set color of each LED to black (off)
+  }
+  for (int i = 0; i < numLEDS; i++)
+  {
+    F_Strip.setPixelColor(i, color);  // Set color of each LED
+    F_Strip.show();                     // Display the updated colors
+    vTaskDelay(550 / portTICK_PERIOD_MS);  // Delay to avoid busy-waiting
+  }
+  F_Strip.show();                     // Display the updated colors
+}
+
 void turnOffFrontLEDS()
 {
   // Clear all LEDs to 'off' (black color)
@@ -180,100 +202,6 @@ void turnOffFrontLEDS()
     F_Strip.setPixelColor(i, 0);  // Set color of each LED to black (off)
   }
   F_Strip.show();                     // Display the updated colors
-}
-
-void updateLEDBrightnessForFMJ(int fmj, uint32_t color) //Old Algorithm
-{
-  int brightness;
-  uint8_t r = (color >> 16) & 0xFF;
-  uint8_t g = (color >> 8) & 0xFF;
-  uint8_t b = color & 0xFF;
-  
-  // Limit fmj to maximum of 20
-  if (fmj > 20) fmj = 20;
-
-  if (fmj <= 20 && fmj >= 16)
-  {
-    switch (20 - fmj)
-    {
-      case 0: brightness = 255; break;  //fullBrightness
-      case 1: brightness = 192; break;  //threeQuarterBrightness
-      case 2: brightness = 128; break;  //halfBrightness
-      case 3: brightness = 64;  break;  //quarterBrightness
-      default: brightness = 0;  break;  //offBrightness
-    }
-    F_Strip.setPixelColor(4, F_Strip.Color(r * brightness / 255, g * brightness / 255, b * brightness / 255));
-    F_Strip.setPixelColor(3, color);
-    F_Strip.setPixelColor(2, color);
-    F_Strip.setPixelColor(1, color);
-    F_Strip.setPixelColor(0, color);
-  }
-  if (fmj <= 16 && fmj >= 12)
-  {
-    switch (16 - fmj)
-    {
-      case 0: brightness = 255; break;  //fullBrightness
-      case 1: brightness = 192; break;  //threeQuarterBrightness
-      case 2: brightness = 128; break;  //halfBrightness
-      case 3: brightness = 64;  break;  //quarterBrightness
-      default: brightness = 0;  break;  //offBrightness
-    }
-    F_Strip.setPixelColor(4, 0);
-    F_Strip.setPixelColor(3, F_Strip.Color(r * brightness / 255, g * brightness / 255, b * brightness / 255));
-    F_Strip.setPixelColor(2, color);
-    F_Strip.setPixelColor(1, color);
-    F_Strip.setPixelColor(0, color);
-  }
-  if (fmj <= 12 && fmj >= 8)
-  {
-    switch (12 - fmj)
-    {
-      case 0: brightness = 255; break;  //fullBrightness
-      case 1: brightness = 192; break;  //threeQuarterBrightness
-      case 2: brightness = 128; break;  //halfBrightness
-      case 3: brightness = 64;  break;  //quarterBrightness
-      default: brightness = 0;  break;  //offBrightness
-    }
-    F_Strip.setPixelColor(4, 0);
-    F_Strip.setPixelColor(3, 0);
-    F_Strip.setPixelColor(2, F_Strip.Color(r * brightness / 255, g * brightness / 255, b * brightness / 255));
-    F_Strip.setPixelColor(1, color);
-    F_Strip.setPixelColor(0, color);
-  }
-  if (fmj <= 8 && fmj >= 4)
-  {
-    switch (8 - fmj)
-    {
-      case 0: brightness = 255; break;  //fullBrightness
-      case 1: brightness = 192; break;  //threeQuarterBrightness
-      case 2: brightness = 128; break;  //halfBrightness
-      case 3: brightness = 64;  break;  //quarterBrightness
-      default: brightness = 0;  break;  //offBrightness
-    }
-    F_Strip.setPixelColor(4, 0);
-    F_Strip.setPixelColor(3, 0);
-    F_Strip.setPixelColor(2, 0);
-    F_Strip.setPixelColor(1, F_Strip.Color(r * brightness / 255, g * brightness / 255, b * brightness / 255));
-    F_Strip.setPixelColor(0, color);
-  }
-  if (fmj <= 4 && fmj >= 0)
-  {
-    switch (4 - fmj)
-    {
-      case 0: brightness = 255; break;  //fullBrightness
-      case 1: brightness = 192; break;  //threeQuarterBrightness
-      case 2: brightness = 128; break;  //halfBrightness
-      case 3: brightness = 64;  break;  //quarterBrightness
-      default: brightness = 0;  break;  //offBrightness
-    }
-    F_Strip.setPixelColor(4, 0);
-    F_Strip.setPixelColor(3, 0);
-    F_Strip.setPixelColor(2, 0);
-    F_Strip.setPixelColor(1, 0);
-    F_Strip.setPixelColor(0, F_Strip.Color(r * brightness / 255, g * brightness / 255, b * brightness / 255));
-  }
-  
-  F_Strip.show();  // Display the updated colors and brightness
 }
 
 void FS_LED_Animation4FMJ(int fmj, uint32_t color) //same algorithm of updateLEDBrightnessForFMJ() but smaller in the code excution 
@@ -500,7 +428,7 @@ void fadeOutALLwithDelay(uint8_t duration)
     F_Strip.show();
     Ring.show();
     R_Strip.show();
-    if(brightness <= 205)
+    if(brightness <= 210)
     {
       brightness = 0;
     }
@@ -524,12 +452,15 @@ void All_LEDs_is_Blue()
   turnOnFrontLEDS(FRONT_LED_STRIP_CNT, flashColorBlue);
   turnOnRearLEDS(REAR_LED_STRIP_CNT, flashColorBlue);
   fadeOutALLwithDelay(50);
-  All_LEDs_Flash(flashColorBlue, 3);
 }
 
 void All_LEDs_Flashes_Blue()
 {
   All_LEDs_Flash(flashColorBlue, 20);
+}
+void All_LEDs_Flashes_Blue2()
+{
+  All_LEDs_Flash(flashColorBlue, 2);
 }
 
 

@@ -3,6 +3,15 @@
 #include "ARGBLibrary.h"
 #include "easyvoice.h"
 #include "easyaudio.h"
+#include <Ticker.h>
+
+Ticker ticker;
+volatile bool tickFlag = false;
+
+void tickHandler()
+{
+  tickFlag = true;
+}
 
 
 /**
@@ -53,9 +62,13 @@ void setup()
   //Initializing LED of Rear that indicate the ammo
   setupRearStrips(255); //the Brightness -> 255 max.
 
+  ticker.attach(3.0, tickHandler);  // Call tickHandler every 1 second
+
   //Butttons configration
   pinMode(TRIGGER_PIN,INPUT);
   pinMode(RELOAD_PIN,INPUT);
+  audio.playTrack(AUDIO_TRACK_DNA_CHK);
+  turnOnFrontLEDs_1by1(5, flashColorRed);
 
   checkButtonAtStartup(2000);
   while(digitalRead(TRIGGER_PIN) == HIGH)
@@ -136,9 +149,11 @@ void checkButtonAtStartup(uint32_t BUTTON_HOLD_THRESHOLD_SETUP)
       else                      // scenarios 2: Button was not pressed at all
       {
         // Wait for the button to be clicked again
+        doActionC();
         delay(10); // Small delay to avoid busy-waiting
       }
     }
+    turnOnFrontLEDS(5, flashColorRed);
   }
 }
 
@@ -155,6 +170,18 @@ void doActionB()    // Action to perform when the button is not held for 5 secon
   // start up fail, all leds flash blue and fail sound.
   audio.playTrack(AUDIO_TRACK_ID_FAIL);
   All_LEDs_Flashes_Blue();
+  Serial.println("- start up fail, all leds flash blue and fail sound. -> ID fail");
+}
+
+void doActionC()    // Action to perform when the button is not held for 5 seconds
+{
+  // start up fail, button not pressed all leds flash blue and fail sound.
+  if (tickFlag)
+  {
+    tickFlag = false;
+    audio.playTrack(AUDIO_TRACK_ID_FAIL);
+  }
+  All_LEDs_Flashes_Blue2();
   Serial.println("- start up fail, all leds flash blue and fail sound. -> ID fail");
 }
 ///////////////////End OF Code Of the StartUP Check For ID Checking///////////////////////End OF Code Of the StartUP Check For ID Checking//////////////////////////
