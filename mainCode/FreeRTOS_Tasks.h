@@ -17,10 +17,16 @@ TaskHandle_t Task1;
 TaskHandle_t Task2;
 TaskHandle_t Task3;
 TaskHandle_t Task4;
+// Timer handle
+TimerHandle_t xShutdownTimer;
+
+//function declaration
+void TaskShutdownTimerCallback(TimerHandle_t xTimer);
 
 // Constants for detecting button click or hold
 const static uint32_t BUTTON_HOLD_THRESHOLD = 1000; // Time in milliseconds to consider the button as held
 const static uint32_t DEBOUNCE_DELAY = 50;          // Debounce delay in milliseconds
+volatile bool timerFlag = false;
 
 void TaskOfTriggerButton(void * parameter)
 {
@@ -32,57 +38,63 @@ void TaskOfTriggerButton(void * parameter)
   {
     if (digitalRead(TRIGGER_PIN) == HIGH) //If here is for checking if it holded or just clicked
     {
-      if (!isButtonPressed) //No action is done here
+      xTimerReset(xShutdownTimer, 0); //rest the timer of the inactive function
+      if (timerFlag == true)          //if we are at inactive state
       {
-        // Button press detected
-        buttonPressStartTime = xTaskGetTickCount();
-        isButtonPressed = true;
-        isButtonHeld = false;
+        timerFlag = false;            //get out of inactive state to active state
+        vTaskDelay(500 / portTICK_PERIOD_MS);  // Delay to debounce button
       }
-      else
+      else                            //if we are at active state
       {
-        // Check if the button is held and do some actions
-        if (!isButtonHeld && (xTaskGetTickCount() - buttonPressStartTime) > (BUTTON_HOLD_THRESHOLD / portTICK_PERIOD_MS)) //action is done here
+        if (!isButtonPressed)         //if the button was not pressed before (because we are in superloop)
         {
-          isButtonHeld = true;
-          // Do action for button hold
-          //change ammo type for now (for testing)
-          selectedAmmoMode++;
-          if (selectedAmmoMode == 6) selectedAmmoMode = 0;
-          playSelectedTrack(AMMO_MODE_IDX_CHGE);
-          Serial.print("ammo:");
-          Serial.println(selectedAmmoMode);
+          // Button press detected
+          buttonPressStartTime = xTaskGetTickCount();   // Get time for the button has been pressed at
+          isButtonPressed = true;                       // make the flag of the button pressed true
+          isButtonHeld = false;                         // make the flag of button hold is false
+        }
+        else                          //if the button is pressed before (because we are in superloop that means the button is pressed and the function is called again but still pressed)
+        {
+          // Check if the button is held and do some actions
+          if (!isButtonHeld && (xTaskGetTickCount() - buttonPressStartTime) > (BUTTON_HOLD_THRESHOLD / portTICK_PERIOD_MS)) //check if the hold of the button exeted the required time.(2second)
+          {
+            isButtonHeld = true;                        // make the flag of button hold is true
+            // Do action for button hold
+            selectedAmmoMode++;                         //change ammo type for now (for testing)
+            if (selectedAmmoMode == 6) selectedAmmoMode = 0;
+            playSelectedTrack(AMMO_MODE_IDX_CHGE);      //play sound of mode change
+            Serial.print("ammo:");                      //print the mode type as number form 0 to 6
+            Serial.println(selectedAmmoMode);
+          }
         }
       }
     }
-    else //Else here is For checking the result of clicking only and then do some actions (After release but didn't reach hold time)
+    else //(after release)checking if the button is pressed after release but didn't reach hold time.
     {
-      if (isButtonPressed)
+      if (isButtonPressed)                              // button is pressed
       {
         //action is done here
-        if (!isButtonHeld) // Button is just clicked not holded
+        if (!isButtonHeld)                              // Button is just clicked not holded for required time.
         {
-          if (ammo_counters[selectedAmmoMode] > 0)
+          if (ammo_counters[selectedAmmoMode] > 0)      // check if there is ammo in the magazine then Do action (Fire action)
           {
-            // Do action for button click
-            playSelectedTrack(AMMO_MODE_IDX_FIRE);
-            muzzleFlash(flashColorGreen, 3);
-            ammo_counters[selectedAmmoMode] -= 1;
+            playSelectedTrack(AMMO_MODE_IDX_FIRE);      // play audio related to ammo type
+            muzzleFlash(flashColorGreen, 3);            // make flash effect (muzzleFlash from the ring LED)
+            ammo_counters[selectedAmmoMode] -= 1;       // decressed the ammo counter
           }
-          else
+          else                                          // if the magazine is empty.
           {
-            playSelectedTrack(AMMO_MODE_IDX_EMTY);
+            playSelectedTrack(AMMO_MODE_IDX_EMTY);      // play audio of empty magazine.
           }
-          Serial.print("Ammo Count: ");
+          Serial.print("Ammo Count: ");                 // print ammo count.
           Serial.println(ammo_counters[selectedAmmoMode]);
         }
-        // Reset button state
-        isButtonPressed = false;
-        isButtonHeld = false;
+        isButtonPressed = false;                        // Reset button state
+        isButtonHeld = false;                           // Reset button state
         vTaskDelay(DEBOUNCE_DELAY / portTICK_PERIOD_MS);  // Delay to debounce button
       }
     }
-    vTaskDelay(10 / portTICK_PERIOD_MS);  // Delay to avoid busy-waiting
+    vTaskDelay(10 / portTICK_PERIOD_MS);                // Delay to avoid busy-waiting
   }
 }
 
@@ -92,22 +104,31 @@ void TaskOfReloadButton(void * parameter)
 {
   for (;;)
   {
-    if (digitalRead(RELOAD_PIN) == HIGH)
+    if (digitalRead(RELOAD_PIN) == HIGH)    //if button of reload is pressed
     {
-      if (selectedAmmoMode == VR_CMD_AMMO_MODE_FMJ || selectedAmmoMode == VR_CMD_AMMO_MODE_RAPID)
+      xTimerReset(xShutdownTimer, 0);       //rest the timer of the inactive function
+      if (timerFlag == true)                //if we are at inactive state
       {
-        ammo_counters[selectedAmmoMode] = 20;
+        timerFlag = false;                  //get out of inactive state to active state
+        vTaskDelay(500 / portTICK_PERIOD_MS);    // Delay to debounce button
       }
-      else
-      {
-        ammo_counters[selectedAmmoMode] = 5;
+      else                                  //if we are at active state.
+      {                                     //do reload action.
+        if (selectedAmmoMode == VR_CMD_AMMO_MODE_FMJ || selectedAmmoMode == VR_CMD_AMMO_MODE_RAPID) //if ammo types is RAPID or FMJ
+        {
+          ammo_counters[selectedAmmoMode] = 20;             // reset counter with 20
+        }
+        else                                                                                        //if ammo is any other type
+        {
+          ammo_counters[selectedAmmoMode] = 5;              // reset counter with 5
+        }
+        audio.playTrack(AUDIO_TRACK_AMMO_RELOAD);           // play audio of reload
+        vTaskDelay(DEBOUNCE_DELAY / portTICK_PERIOD_MS);    // Delay to debounce audio
       }
-      audio.playTrack(AUDIO_TRACK_AMMO_RELOAD);
-      muzzleFlash(flashColorBlue, 2);
     }
-    else
+    else                                    //if is not pressed
     {
-      vTaskDelay(10 / portTICK_PERIOD_MS);  // Delay to debounce button
+      vTaskDelay(10 / portTICK_PERIOD_MS);  // Delay to avoid busy-waiting
     }
   }
 }
@@ -117,17 +138,21 @@ void TaskOfFrontStripAmmoCounter(void * parameter)
 {
   for (;;)
   {
-    Serial.print("selectedAmmoMode: ");
-    Serial.println(selectedAmmoMode);
-    if (selectedAmmoMode == VR_CMD_AMMO_MODE_FMJ || selectedAmmoMode == VR_CMD_AMMO_MODE_RAPID)
+    if (timerFlag == false)                     //if we are at active state.
     {
-      FS_LED_Animation4FMJ(ammo_counters[selectedAmmoMode], flashColorRed);
+      Serial.print("selectedAmmoMode: ");       //print selected ammo type as number from 0 to 6
+      Serial.println(selectedAmmoMode);
+      turnOnRearLEDsRedBlue();                  // turn on rear LEDs Cells as one for "Red" and the other is "Blue".
+      if (selectedAmmoMode == VR_CMD_AMMO_MODE_FMJ || selectedAmmoMode == VR_CMD_AMMO_MODE_RAPID)           //check if the ammo is FMJ or Rapid
+      {
+        FS_LED_Animation4FMJ(ammo_counters[selectedAmmoMode], flashColorRed);       //refresh the Front LED strip with the ammo count with certain animation.
+      }
+      else                                                                                                  //if the selected ammo is any other type
+      {
+        turnOnFrontLEDS(ammo_counters[selectedAmmoMode], flashColorRed);            //refresh the Front LED strip with the ammo count.
+      }
     }
-    else
-    {
-      turnOnFrontLEDS(ammo_counters[selectedAmmoMode], flashColorRed);
-    }
-    vTaskDelay(500 / portTICK_PERIOD_MS);
+    vTaskDelay(500 / portTICK_PERIOD_MS);                                           // do it again every half second + Delay to avoid busy-waiting
   }
 }
 
@@ -136,9 +161,24 @@ void TaskOfVoiceRecognitionChecking(void * parameter)
 {
   for (;;)
   {
-    checkVoiceCommands();
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+    if (timerFlag == false)                   //if we are at active state.
+    {
+      checkVoiceCommands();                   //Check on Voice commands and change the ammo type if there is a command.
+    }
+    vTaskDelay(10 / portTICK_PERIOD_MS);      // Delay to avoid busy-waiting
   }
+}
+
+void TaskShutdownTimerCallback(TimerHandle_t xTimer)
+{
+  // No button pressed for 2 minutes
+  if ( timerFlag == false)                    //if we are at active state.
+  {
+    timerFlag = true;                         //get out of active state to inactive state
+    vTaskDelay(500 / portTICK_PERIOD_MS);     // Delay to debounce
+  }
+  fadeOutALLwithDelay(50);                    // All LEDs makes fade animation till all are off.
+  //  xTimerReset(xShutdownTimer, 0);
 }
 
 void SetupFreeRTOS()
@@ -196,6 +236,12 @@ void SetupFreeRTOS()
     2,                              // Task priority
     &Task4,                         // Task handle
     1);                             // Core to run the task on (0 or 1)
+
+  // Create active/inactive timer
+  xShutdownTimer = xTimerCreate("ShutdownTimer", pdMS_TO_TICKS(120000), pdFALSE, (void *)0, TaskShutdownTimerCallback);
+
+  // Start the timer
+  xTimerStart(xShutdownTimer, 0);
 }
 
 #endif //FREERTOS_TASKS_H

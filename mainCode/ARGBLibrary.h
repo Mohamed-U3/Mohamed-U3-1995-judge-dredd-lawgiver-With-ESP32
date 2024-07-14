@@ -367,7 +367,7 @@ void fadeOutALL()
   {
     for (int i = 0; i < REAR_LED_STRIP_CNT; i++)
     {
-      uint32_t color = F_Strip.getPixelColor(i);
+      uint32_t color = R_Strip.getPixelColor(i);
       uint8_t r = (color >> 16) & 0xFF;
       uint8_t g = (color >> 8) & 0xFF;
       uint8_t b = color & 0xFF;
@@ -403,7 +403,7 @@ void fadeOutALLwithDelay(uint8_t duration)
   {
     for (int i = 0; i < REAR_LED_STRIP_CNT; i++)
     {
-      uint32_t color = F_Strip.getPixelColor(i);
+      uint32_t color = R_Strip.getPixelColor(i);
       uint8_t r = (color >> 16) & 0xFF;
       uint8_t g = (color >> 8) & 0xFF;
       uint8_t b = color & 0xFF;

@@ -47,7 +47,7 @@ void setup()
   // initializes the audio player and sets the volume
   uint8_t loopStage = LOOP_STATE_START;
   int bootAttempts = 0;
-  while (bootAttempts < 3 && !audio.begin(15))
+  while (bootAttempts < 3 && !audio.begin(30))
   {
     bootAttempts++;
     delay(3000);
@@ -76,7 +76,6 @@ void setup()
     Serial.println("Button still pressed plz release it");
   }
   delay(500); // for debuncing
-  turnOnRearLEDsRedBlue(); 
   SetupFreeRTOS();
 }
 
