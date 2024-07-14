@@ -42,6 +42,7 @@ void TaskOfTriggerButton(void * parameter)
       if (timerFlag == true)          //if we are at inactive state
       {
         timerFlag = false;            //get out of inactive state to active state
+        turnOnFrontLEDs_1by1(5, flashColorRed);// Animation of the front LED strip.
         vTaskDelay(500 / portTICK_PERIOD_MS);  // Delay to debounce button
       }
       else                            //if we are at active state
@@ -110,6 +111,7 @@ void TaskOfReloadButton(void * parameter)
       if (timerFlag == true)                //if we are at inactive state
       {
         timerFlag = false;                  //get out of inactive state to active state
+        turnOnFrontLEDs_1by1(5, flashColorRed);  // Animation of the front LED strip.
         vTaskDelay(500 / portTICK_PERIOD_MS);    // Delay to debounce button
       }
       else                                  //if we are at active state.
