@@ -41,8 +41,8 @@ void TaskOfTriggerButton(void * parameter)
       xTimerReset(xShutdownTimer, 0); //rest the timer of the inactive function
       if (timerFlag == true)          //if we are at inactive state
       {
-        timerFlag = false;            //get out of inactive state to active state
         turnOnFrontLEDs_1by1(5, flashColorRed);// Animation of the front LED strip.
+        timerFlag = false;                     //get out of inactive state to active state
         vTaskDelay(500 / portTICK_PERIOD_MS);  // Delay to debounce button
       }
       else                            //if we are at active state
@@ -110,9 +110,9 @@ void TaskOfReloadButton(void * parameter)
       xTimerReset(xShutdownTimer, 0);       //rest the timer of the inactive function
       if (timerFlag == true)                //if we are at inactive state
       {
-        timerFlag = false;                  //get out of inactive state to active state
-        turnOnFrontLEDs_1by1(5, flashColorRed);  // Animation of the front LED strip.
-        vTaskDelay(500 / portTICK_PERIOD_MS);    // Delay to debounce button
+        turnOnFrontLEDs_1by1(5, flashColorRed);// Animation of the front LED strip.
+        timerFlag = false;                     //get out of inactive state to active state
+        vTaskDelay(500 / portTICK_PERIOD_MS);  // Delay to debounce button
       }
       else                                  //if we are at active state.
       {                                     //do reload action.
