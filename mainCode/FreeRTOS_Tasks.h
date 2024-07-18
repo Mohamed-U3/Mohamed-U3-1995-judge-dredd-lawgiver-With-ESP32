@@ -144,7 +144,7 @@ void TaskOfFrontStripAmmoCounter(void * parameter)
     {
       Serial.print("selectedAmmoMode: ");       //print selected ammo type as number from 0 to 6
       Serial.println(selectedAmmoMode);
-      turnOnRearLEDsRedBlue();                  // turn on rear LEDs Cells as one for "Red" and the other is "Blue".
+      turnOnRearLEDsBlue();                     // turn on rear LEDs Cells as one for "Red" and the other is "Blue".
       if (selectedAmmoMode == VR_CMD_AMMO_MODE_FMJ || selectedAmmoMode == VR_CMD_AMMO_MODE_RAPID)           //check if the ammo is FMJ or Rapid
       {
         FS_LED_Animation4FMJ(ammo_counters[selectedAmmoMode], flashColorRed);       //refresh the Front LED strip with the ammo count with certain animation.
@@ -153,6 +153,8 @@ void TaskOfFrontStripAmmoCounter(void * parameter)
       {
         turnOnFrontLEDS(ammo_counters[selectedAmmoMode], flashColorRed);            //refresh the Front LED strip with the ammo count.
       }
+      if(ammo_counters[selectedAmmoMode] != 0)  turnOffRearLEDsRed();
+      else                                      turnOnRearLEDsRed();
     }
     vTaskDelay(500 / portTICK_PERIOD_MS);                                           // do it again every half second + Delay to avoid busy-waiting
   }

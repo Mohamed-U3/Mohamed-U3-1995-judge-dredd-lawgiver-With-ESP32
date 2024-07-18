@@ -130,15 +130,19 @@ void checkButtonAtStartup(uint32_t BUTTON_HOLD_THRESHOLD_SETUP)
         // Check if the button is held for the threshold duration
         if ((millis() - buttonPressStartTime) > BUTTON_HOLD_THRESHOLD_SETUP)
         {
-          // Button held for 5 seconds
+          // Button held for 2 seconds
           doActionA();
+          turnOffRearLEDsRed();
+          turnOnRearLEDsBlue();
           return;
         }
       }
     }
     else
     {
-      //Elss means we failed to check or Failed to press and Hold 5 seconds and there is 2 scenarios 
+      turnOnRearLEDsRed();
+      turnOffRearLEDsBlue();
+      //Elss means we failed to check or Failed to press and Hold 2 seconds and there is 2 scenarios 
       if (isButtonPressed)       // scenarios 1: Button was pressed but not held for 5 seconds
       {
         // Button was pressed but not held for 5 seconds
@@ -168,7 +172,7 @@ void doActionB()    // Action to perform when the button is not held for 5 secon
 {
   // start up fail, all leds flash blue and fail sound.
   audio.playTrack(AUDIO_TRACK_ID_FAIL);
-  All_LEDs_Flashes_Blue();
+//  All_LEDs_Flashes_Blue();
   Serial.println("- start up fail, all leds flash blue and fail sound. -> ID fail");
 }
 
@@ -180,7 +184,7 @@ void doActionC()    // Action to perform when the button is not held for 5 secon
     tickFlag = false;
     audio.playTrack(AUDIO_TRACK_ID_FAIL);
   }
-  All_LEDs_Flashes_Blue2();
+//  All_LEDs_Flashes_Blue2();
   Serial.println("- start up fail, all leds flash blue and fail sound. -> ID fail");
 }
 ///////////////////End OF Code Of the StartUP Check For ID Checking///////////////////////End OF Code Of the StartUP Check For ID Checking//////////////////////////

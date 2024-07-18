@@ -330,8 +330,28 @@ void turnOffRearLEDS()
 
 void turnOnRearLEDsRedBlue()
 {
-  R_Strip.setPixelColor(0, flashColorRed);  
-  R_Strip.setPixelColor(1, flashColorBlue);  
+  R_Strip.setPixelColor(0, flashColorRed);
+  R_Strip.setPixelColor(1, flashColorBlue);
+  R_Strip.show();                     // Display the updated colors
+}
+void turnOnRearLEDsRed()
+{
+  R_Strip.setPixelColor(0, flashColorRed);
+  R_Strip.show();                     // Display the updated colors
+}
+void turnOnRearLEDsBlue()
+{
+  R_Strip.setPixelColor(1, flashColorBlue);
+  R_Strip.show();                     // Display the updated colors
+}
+void turnOffRearLEDsRed()
+{
+  R_Strip.setPixelColor(0, 0);
+  R_Strip.show();                     // Display the updated colors
+}
+void turnOffRearLEDsBlue()
+{
+  R_Strip.setPixelColor(1, 0);
   R_Strip.show();                     // Display the updated colors
 }
 
