@@ -52,6 +52,8 @@ void setup()
     bootAttempts++;
     delay(3000);
   }
+  audio.playTrack(AUDIO_TRACK_DNA_CHK);
+  delay(1000);  
   if (bootAttempts == 3)
     loopStage = LOOP_STATE_ERROR;
   
@@ -164,7 +166,7 @@ void doActionA()    // Action to perform when the button is held for 5 seconds
 {
   //- start up success and start up sounds
   audio.playTrack(AUDIO_TRACK_ID_OK);
-  All_LEDs_is_Blue();
+//  All_LEDs_is_Blue();
   Serial.println("- start up success and start up sounds -> ID Ok");
 }
 
@@ -172,7 +174,7 @@ void doActionB()    // Action to perform when the button is not held for 5 secon
 {
   // start up fail, all leds flash blue and fail sound.
   audio.playTrack(AUDIO_TRACK_ID_FAIL);
-//  All_LEDs_Flashes_Blue();
+  All_LEDs_Flashes_Blue();
   Serial.println("- start up fail, all leds flash blue and fail sound. -> ID fail");
 }
 
@@ -184,7 +186,7 @@ void doActionC()    // Action to perform when the button is not held for 5 secon
     tickFlag = false;
     audio.playTrack(AUDIO_TRACK_ID_FAIL);
   }
-//  All_LEDs_Flashes_Blue2();
+  All_LEDs_Flashes_Blue2();
   Serial.println("- start up fail, all leds flash blue and fail sound. -> ID fail");
 }
 ///////////////////End OF Code Of the StartUP Check For ID Checking///////////////////////End OF Code Of the StartUP Check For ID Checking//////////////////////////

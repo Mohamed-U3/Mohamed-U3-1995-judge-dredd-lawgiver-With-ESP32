@@ -24,7 +24,7 @@ const uint32_t flashColorYellow = Ring.Color(255, 255, 0);     // Yellow
 const uint32_t flashColorPurple = Ring.Color(128, 0, 128);     // Purple
 const uint32_t flashColorCyan   = Ring.Color(0, 255, 255);     // Cyan
 const uint32_t flashColorWhite  = Ring.Color(255, 255, 255);   // White
-const uint32_t flashColorOrange = Ring.Color(255, 165, 0);     // Orange
+const uint32_t flashColorOrange = Ring.Color(205, 102, 0);     // Orange
 const uint32_t flashColorPink   = Ring.Color(255, 192, 203);   // Pink
 const uint32_t flashColorViolet = Ring.Color(238, 130, 238);   // Violet
 

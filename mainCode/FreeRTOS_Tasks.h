@@ -39,7 +39,7 @@ void TaskOfTriggerButton(void * parameter)
     if (digitalRead(TRIGGER_PIN) == HIGH) //If here is for checking if it holded or just clicked
     {
       xTimerReset(xShutdownTimer, 0); //rest the timer of the inactive function
-      if (timerFlag == true)          //if we are at inactive state
+      if (timerFlag == true)          //if we are at inactive state you pressed the button to go active again
       {
         turnOnFrontLEDs_1by1(5, flashColorRed);// Animation of the front LED strip.
         timerFlag = false;                     //get out of inactive state to active state
@@ -80,7 +80,15 @@ void TaskOfTriggerButton(void * parameter)
           if (ammo_counters[selectedAmmoMode] > 0)      // check if there is ammo in the magazine then Do action (Fire action)
           {
             playSelectedTrack(AMMO_MODE_IDX_FIRE);      // play audio related to ammo type
-            muzzleFlash(flashColorGreen, 3);            // make flash effect (muzzleFlash from the ring LED)
+            switch (selectedAmmoMode)                   // make flash effect (muzzleFlash from the ring LED)
+            {                
+              case VR_CMD_AMMO_MODE_GRENADE:  muzzleFlash(flashColorRed,   2);    break;
+              case VR_CMD_AMMO_MODE_AP:       muzzleFlash(flashColorPurple,2);    break;
+              case VR_CMD_AMMO_MODE_DW:       muzzleFlash(flashColorOrange,2); vTaskDelay(300 / portTICK_PERIOD_MS); muzzleFlash(flashColorOrange,2); break;
+              case VR_CMD_AMMO_MODE_SF:       muzzleFlash(flashColorYellow,2);    break;
+              case VR_CMD_AMMO_MODE_FMJ:      muzzleFlash(flashColorWhite, 2);    break;
+              case VR_CMD_AMMO_MODE_RAPID:    muzzleFlash(flashColorWhite, 8);    break;
+            }
             ammo_counters[selectedAmmoMode] -= 1;       // decressed the ammo counter
           }
           else                                          // if the magazine is empty.
@@ -115,7 +123,7 @@ void TaskOfReloadButton(void * parameter)
         vTaskDelay(500 / portTICK_PERIOD_MS);  // Delay to debounce button
       }
       else                                  //if we are at active state.
-      {                                     //do reload action.
+      { //do reload action.
         if (selectedAmmoMode == VR_CMD_AMMO_MODE_FMJ || selectedAmmoMode == VR_CMD_AMMO_MODE_RAPID) //if ammo types is RAPID or FMJ
         {
           ammo_counters[selectedAmmoMode] = 20;             // reset counter with 20
@@ -153,7 +161,7 @@ void TaskOfFrontStripAmmoCounter(void * parameter)
       {
         turnOnFrontLEDS(ammo_counters[selectedAmmoMode], flashColorRed);            //refresh the Front LED strip with the ammo count.
       }
-      if(ammo_counters[selectedAmmoMode] != 0)  turnOffRearLEDsRed();
+      if (ammo_counters[selectedAmmoMode] != 0)  turnOffRearLEDsRed();
       else                                      turnOnRearLEDsRed();
     }
     vTaskDelay(500 / portTICK_PERIOD_MS);                                           // do it again every half second + Delay to avoid busy-waiting
