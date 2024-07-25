@@ -52,7 +52,7 @@ void setup()
     bootAttempts++;
     delay(3000);
   }
-  audio.playTrack(AUDIO_TRACK_DNA_CHK);
+  audio.playTrack(AUDIO_TRACK_SILENCE);
   delay(1000);  
   if (bootAttempts == 3)
     loopStage = LOOP_STATE_ERROR;

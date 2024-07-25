@@ -62,7 +62,7 @@ void TaskOfTriggerButton(void * parameter)
             isButtonHeld = true;                        // make the flag of button hold is true
             // Do action for button hold
             selectedAmmoMode++;                         //change ammo type for now (for testing)
-            if (selectedAmmoMode == 6) selectedAmmoMode = 0;
+            if (selectedAmmoMode >= 6) selectedAmmoMode = 0;
             playSelectedTrack(AMMO_MODE_IDX_CHGE);      //play sound of mode change
             Serial.print("ammo:");                      //print the mode type as number form 0 to 6
             Serial.println(selectedAmmoMode);
