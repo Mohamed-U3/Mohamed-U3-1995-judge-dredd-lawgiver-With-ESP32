@@ -66,6 +66,7 @@ void TaskOfTriggerButton(void * parameter)
             playSelectedTrack(AMMO_MODE_IDX_CHGE);      //play sound of mode change
             Serial.print("ammo:");                      //print the mode type as number form 0 to 6
             Serial.println(selectedAmmoMode);
+            vTaskDelay(100 / portTICK_PERIOD_MS);  // Delay to debounce button
           }
         }
       }
@@ -82,12 +83,15 @@ void TaskOfTriggerButton(void * parameter)
             playSelectedTrack(AMMO_MODE_IDX_FIRE);      // play audio related to ammo type
             switch (selectedAmmoMode)                   // make flash effect (muzzleFlash from the ring LED)
             {                
-              case VR_CMD_AMMO_MODE_GRENADE:  muzzleFlash(flashColorRed,   2);    break;
-              case VR_CMD_AMMO_MODE_AP:       muzzleFlash(flashColorPurple,2);    break;
-              case VR_CMD_AMMO_MODE_DW:       muzzleFlash(flashColorOrange,2); vTaskDelay(300 / portTICK_PERIOD_MS); muzzleFlash(flashColorOrange,2); break;
-              case VR_CMD_AMMO_MODE_SF:       muzzleFlash(flashColorYellow,2);    break;
-              case VR_CMD_AMMO_MODE_FMJ:      muzzleFlash(flashColorWhite, 2);    break;
-              case VR_CMD_AMMO_MODE_RAPID:    muzzleFlash(flashColorWhite, 8);    break;
+              case VR_CMD_AMMO_MODE_GRENADE:  muzzleFlash(flashColorRed,   2);        break;
+              case VR_CMD_AMMO_MODE_AP:       muzzleFlash(flashColorPurple,2);        break;
+              case VR_CMD_AMMO_MODE_DW:       muzzleFlash(flashColorOrange,2); 
+                                              vTaskDelay(500 / portTICK_PERIOD_MS); 
+                                              muzzleFlash(flashColorOrange,2);
+                                              playSelectedTrack(AMMO_MODE_IDX_FIRE);  break;
+              case VR_CMD_AMMO_MODE_SF:       muzzleFlash(flashColorYellow,2);        break;
+              case VR_CMD_AMMO_MODE_FMJ:      muzzleFlash(flashColorWhite, 2);        break;
+              case VR_CMD_AMMO_MODE_RAPID:    muzzleFlash(flashColorWhite, 10);       break;
             }
             ammo_counters[selectedAmmoMode] -= 1;       // decressed the ammo counter
           }
