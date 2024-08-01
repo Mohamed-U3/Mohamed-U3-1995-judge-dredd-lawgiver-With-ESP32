@@ -37,6 +37,7 @@ const char DISPLAY_USER_ID[] PROGMEM =      {"Dredd"};
 // Pin configuration for all momentary triggers
 #define TRIGGER_PIN           34
 #define RELOAD_PIN            35
+#define FLASH_BUTTON_PIN      13
 //#define NextAmmo_PIN          15
 
 // Oled Screen is not used in this code 
@@ -53,7 +54,7 @@ const char DISPLAY_USER_ID[] PROGMEM =      {"Dredd"};
 // set these to 0 if you want to disable the component
 #define MUZZLE_FLASH_LED_PIN    14  //pin number
 #define MUZZLE_FLASH_LED_CNT    7   //LEDs
-#define SPECIAL_FIRE_LED_PIN    2   //pin number
+#define SPECIAL_FIRE_LED_PIN    15  //pin number
 #define SPECIAL_FIRE_LED_CNT    7   //LEDs
 #define FRONT_LED_STRIP_PIN     23  //pin number
 #define FRONT_LED_STRIP_CNT     5   //LEDs

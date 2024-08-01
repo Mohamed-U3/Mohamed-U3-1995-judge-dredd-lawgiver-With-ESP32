@@ -69,6 +69,7 @@ void setup()
   //Butttons configration
   pinMode(TRIGGER_PIN,INPUT);
   pinMode(RELOAD_PIN,INPUT);
+  pinMode(FLASH_BUTTON_PIN,INPUT);
   audio.playTrack(AUDIO_TRACK_DNA_CHK);
   turnOnFrontLEDs_1by1(5, flashColorRed);
 
@@ -205,10 +206,24 @@ void doActionC()    // Action to perform when the button is not held for 5 secon
 void checkVoiceCommands(void)
 {
   int cmd = voice.readCommand();
-
-  if (cmd > -1)
+  static bool FlashFlag = false;
+  if (cmd > -1 || digitalRead(FLASH_BUTTON_PIN) == HIGH)
   {
-    changeAmmoMode(cmd);
+    if(cmd == 6 || digitalRead(FLASH_BUTTON_PIN) == HIGH) //if the command is number 6 (flash ring2)
+    {
+      if(FlashFlag == false)  //if the flash is OFF
+      {
+        turnOnRing2LEDS(7, flashColorWhite);  //turn it ON
+        FlashFlag = true;                     //change the flag to ON
+      }
+      else                    //if the flash is ON
+      {
+        turnOffRing2LEDS();   //turn it OFF
+        FlashFlag = false;    //change the flag to OFF
+      }
+      vTaskDelay(100 / portTICK_PERIOD_MS);  // Delay to debounce button 
+    }
+    else changeAmmoMode(cmd);
   }
 }
 

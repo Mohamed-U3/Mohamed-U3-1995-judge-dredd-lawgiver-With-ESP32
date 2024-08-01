@@ -5,6 +5,8 @@
 
 #define RING_LED_PIN      MUZZLE_FLASH_LED_PIN
 #define RING_NUM_LEDS     MUZZLE_FLASH_LED_CNT
+#define RING2_LED_PIN     SPECIAL_FIRE_LED_PIN
+#define RING2_NUM_LEDS    SPECIAL_FIRE_LED_CNT
 #define F_LED_STRIP_PIN   FRONT_LED_STRIP_PIN
 #define F_STRIP_NUM_LEDS  FRONT_LED_STRIP_CNT
 #define R_LED_STRIP_PIN   REAR_LED_STRIP_PIN
@@ -12,6 +14,7 @@
 
 // Create an instance of the Adafruit_NeoPixel class
 Adafruit_NeoPixel Ring    = Adafruit_NeoPixel(RING_NUM_LEDS,        RING_LED_PIN        , NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel Ring2   = Adafruit_NeoPixel(RING2_NUM_LEDS,       RING2_LED_PIN       , NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel F_Strip = Adafruit_NeoPixel(FRONT_LED_STRIP_CNT , FRONT_LED_STRIP_PIN , NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel R_Strip = Adafruit_NeoPixel(REAR_LED_STRIP_CNT  , REAR_LED_STRIP_PIN  , NEO_GRB + NEO_KHZ800);
 
@@ -28,11 +31,19 @@ const uint32_t flashColorOrange = Ring.Color(205, 102, 0);     // Orange
 const uint32_t flashColorPink   = Ring.Color(255, 192, 203);   // Pink
 const uint32_t flashColorViolet = Ring.Color(238, 130, 238);   // Violet
 
+//****************Start**********************////****************Start**********************////****************Start**********************//
+/////////Start Code of Rings////////////////////////////Start Code of Rings//////////////////////////Start Code of Rings/////////////////////
+
 void setupmuzzleFlash(uint8_t Brightness)
 {
-  Ring.begin();            // Initialize the strip
-  Ring.show();             // Initialize all pixels to 'off'
-  Ring.setBrightness(Brightness); // Set maximum brightness
+  Ring.begin();                     // Initialize the strip
+  Ring2.begin();                    // Initialize the strip
+  
+  Ring.show();                      // Initialize all pixels to 'off'
+  Ring2.show();                     // Initialize all pixels to 'off'
+  
+  Ring.setBrightness(Brightness);   // Set maximum brightness
+  Ring2.setBrightness(Brightness);  // Set maximum brightness
 }
 
 void flashRing(uint32_t color)
@@ -102,6 +113,39 @@ void turnOffRingLEDS()
   }
   Ring.show();                     // Display the updated colors
 }
+
+void turnOnRing2LEDS(uint8_t numLEDS, uint32_t color)
+{
+  // Limit numLEDS to the maximum number of LEDs in the strip
+  if (numLEDS > RING2_NUM_LEDS)
+  {
+    numLEDS = RING2_NUM_LEDS;
+  }
+
+  // Clear all LEDs to 'off' (black color)
+  for (int i = 0; i < RING2_NUM_LEDS; i++)
+  {
+    Ring2.setPixelColor(i, 0);      // Set color of each LED to black (off)
+  }
+  for (int i = 0; i < numLEDS; i++)
+  {
+    Ring2.setPixelColor(i, color);  // Set color of each LED
+  }
+  Ring2.show();                     // Display the updated colors
+}
+
+void turnOffRing2LEDS()
+{
+  // Clear all LEDs to 'off' (black color)
+  for (int i = 0; i < RING2_NUM_LEDS; i++)
+  {
+    Ring2.setPixelColor(i, 0);  // Set color of each LED to black (off)
+  }
+  Ring2.show();                 // Display the updated colors
+}
+
+/////////Start Code of Rings////////////////////////////Start Code of Rings//////////////////////////Start Code of Rings/////////////////////
+//****************End************************////****************End************************////****************End************************//
 
 //****************Start**********************////****************Start**********************////****************Start**********************//
 /////////Start Code of Front Strips///////////////////Start Code of Front Strips///////////////////Start Code of Front Strips////////////////
