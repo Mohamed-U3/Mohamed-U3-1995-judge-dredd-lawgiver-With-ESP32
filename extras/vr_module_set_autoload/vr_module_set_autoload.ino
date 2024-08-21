@@ -14,8 +14,8 @@
 /**
  * These are used to enable the autoload feature. This requires the 7 commands to be trained.
  */
-static const uint8_t RECORD_CNT   = 6;
-static uint8_t RECORDS[]    = {0, 1, 2, 3, 4, 5};
+static const uint8_t RECORD_CNT   = 7;
+static uint8_t RECORDS[]    = {0, 1, 2, 3, 4, 5, 6};
 
 EasyVR _vr(VOICE_RX_PIN, VOICE_TX_PIN);  // 2:RX 3:TX, this is the usual wiring
 

@@ -4,7 +4,7 @@
 #define MINI_BAUD_RATE 9600
 #define PRO_BAUD_RATE 115200
 // uncomment if you are using the DFPlayer Pro
-#define ENABLE_EASY_AUDIO_PRO
+//#define ENABLE_EASY_AUDIO_PRO
 
 #include <SoftwareSerial.h>
 #ifdef ENABLE_EASY_AUDIO_PRO
@@ -64,7 +64,7 @@ public:
     _player.setVolume(vol);    // initial volume, 30 is max, 25 makes the wife not angry
 #else
     _mySerial.begin(MINI_BAUD_RATE);
-    _player.begin(_mySerial, true);  //set Serial for DFPlayer-mini mp3 module
+    _player.begin(_mySerial, false);  //set Serial for DFPlayer-mini mp3 module
     _player.volume(vol);                    //initial volume, 30 is max, 3 makes the wife not angry
 #endif
     delay(1000);
@@ -101,7 +101,26 @@ public:
   #ifdef ENABLE_EASY_AUDIO_PRO
     _player.playFileNum(track);
   #else
-    _player.play(track);
+    uint8_t statuS = false;
+    do
+    {
+      _player.play(track);
+      delay(200);
+      statuS = _player.isPlaying();
+      if (statuS == -1)
+      {
+        Serial.println(".................................Error Happened");
+      }
+      else if (statuS == true)
+      {
+        Serial.println(".................................playing track");
+      }
+      else if (statuS == false)
+      {
+        Serial.println(".................................trying again");
+      }
+    }
+    while (statuS == false);
   #endif
 #endif
   }
@@ -112,7 +131,26 @@ public:
   #ifdef ENABLE_EASY_AUDIO_PRO
     _player.playFileNum(track, true);
   #else
-    _player.play(track);
+    uint8_t statuS = false;
+    do
+    {
+      _player.play(track);
+      delay(200);
+      statuS = _player.isPlaying();
+      if (statuS == -1)
+      {
+        Serial.println(".................................Error Happened");
+      }
+      else if (statuS == true)
+      {
+        Serial.println(".................................playing track");
+      }
+      else if (statuS == false)
+      {
+        Serial.println(".................................trying again");
+      }
+    }
+    while (statuS == false);
   #endif
     delay(_playbackDelay);
 #endif

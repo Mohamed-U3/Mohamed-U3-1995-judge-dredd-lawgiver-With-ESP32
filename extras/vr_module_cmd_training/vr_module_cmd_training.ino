@@ -15,8 +15,8 @@
 /**
  * These are used to enable the autoload feature. This requires the 7 commands to be trained.
  */
-static const uint8_t CMD_NUM = 6;
-static uint8_t CMD_RECORDS[] = { 0, 1, 2, 3, 4, 5};
+static const uint8_t CMD_NUM = 7;
+static uint8_t CMD_RECORDS[] = { 0, 1, 2, 3, 4, 5, 6};
 
 const char cmdList[CMD_NUM][15] = {  // command list table
   { "Grenade" },
@@ -24,7 +24,8 @@ const char cmdList[CMD_NUM][15] = {  // command list table
   { "Double Whammy" },
   { "Signal Flare" },
   { "Full Metal" },
-  { "Rapid" }
+  { "Rapid" },
+  { "Flash" }
 };
 
 EasyVR _vr(VOICE_RX_PIN, VOICE_TX_PIN);  // 2:RX 3:TX, you can choose your favourite pins.
