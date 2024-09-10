@@ -47,7 +47,7 @@ void setup()
   // initializes the audio player and sets the volume
   uint8_t loopStage = LOOP_STATE_START;
   int bootAttempts = 0;
-  while (bootAttempts < 3 && !audio.begin(30))
+  while (bootAttempts < 3 && !audio.begin(20))
   {
     bootAttempts++;
     delay(3000);
